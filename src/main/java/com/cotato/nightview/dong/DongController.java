@@ -1,4 +1,4 @@
-package com.cotato.nightview.gu;
+package com.cotato.nightview.dong;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -6,13 +6,15 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/gu")
+@RequestMapping("/dong")
 @RequiredArgsConstructor
-public class GuController {
-    private final GuService guService;
-    @GetMapping("/init-gu")
-    public String initGu() {
-        guService.initGu();
+public class DongController {
+    private final DongService dongService;
+
+    @GetMapping("/init-dong")
+    public String initDong() {
+        dongService.initDong();
         return "success!";
     }
+
 }

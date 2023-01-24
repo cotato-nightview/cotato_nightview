@@ -1,5 +1,8 @@
-package com.cotato.nightview.gu;
+package com.cotato.nightview.dong;
 
+import com.cotato.nightview.gu.Gu;
+import com.cotato.nightview.gu.GuDto;
+import com.cotato.nightview.gu.GuService;
 import com.cotato.nightview.json.JsonService;
 import lombok.RequiredArgsConstructor;
 import org.json.simple.JSONArray;
@@ -8,28 +11,26 @@ import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-public class GuService {
+public class DongService {
     private final JsonService jsonService;
-    private final GuRepository guRepository;
-
-    public void initGu() {
+    private final GuService guService;
+    private final DongRepository dongRepository;
+    public void initDong() {
         String areaInfoJson = jsonService.readFileAsString("dong_coords.json");
         JSONArray areaInfoArray = jsonService.parseJsonArray(areaInfoJson, "areaInfo");
         for (Object areaObj : areaInfoArray) {
-
             JSONObject areaObjJson = (JSONObject) areaObj;
+            String dongName = areaObjJson.get("dong").toString();
             String guName = areaObjJson.get("gu").toString();
+            if(dongRepository.findByName(dongName)==null){
+                Gu gu = guService.findByName(guName);
 
-            if (guRepository.findByName(guName) == null) {
-                GuDto guDto = GuDto.builder()
-                        .gu(guName)
+                DongDto dto = DongDto.builder()
+                        .name(dongName)
                         .build();
-                guRepository.save(guDto.toEntity());
+
+                dongRepository.save(dto.toEntity(gu));
             }
         }
-    }
-
-    public Gu findByName(String name) {
-        return guRepository.findByName(name);
     }
 }
