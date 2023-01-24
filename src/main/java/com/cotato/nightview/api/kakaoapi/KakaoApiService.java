@@ -1,12 +1,11 @@
-package com.cotato.nightview.kakaoapi;
+package com.cotato.nightview.api.kakaoapi;
 
+import com.cotato.nightview.api.ApiService;
 import com.cotato.nightview.coord.Coord;
 import com.cotato.nightview.json.JsonService;
 import lombok.RequiredArgsConstructor;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
 import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -17,19 +16,19 @@ import java.net.URI;
 
 @Service
 @RequiredArgsConstructor
-public class KakaoApiService {
+public class KakaoApiService implements ApiService {
     private final JsonService jsonService;
 
     public Coord transCoord(double mapx, double mapy) {
         // 좌표로 URI 생성
-        URI uri = buildUriByCoord(mapx, mapy);
+        URI uri = buildUri(mapx, mapy);
         System.out.println("mapx = " + mapx);
         System.out.println("mapy = " + mapy);
         // URI로 요청 엔티티 생성
         RequestEntity<Void> requestEntity = buildRequestEntity(uri);
 
         // API 호출 후 응답을 String 형식 Json으로 받음
-        ResponseEntity<String> res = callKakaoTransCoordApi(requestEntity);
+        ResponseEntity<String> res = callApi(requestEntity);
 
         // API 응답 중 실제 좌표 정보인 "documents"만 파싱
 //        JSONArray jsonArray = parseDocumentsJson(res);
@@ -45,8 +44,8 @@ public class KakaoApiService {
     private static Coord jsonToCoord(JSONObject coordJson) {
         return new Coord((double) coordJson.get("x"), (double) coordJson.get("y"));
     }
-
-    private static URI buildUriByCoord(double mapx, double mapy) {
+    @Override
+    public URI buildUri(Object mapx, Object mapy) {
         return UriComponentsBuilder.fromUriString("http://dapi.kakao.com")
                 .path("/v2/local/geo/transcoord.json")
                 .queryParam("x", mapx)
@@ -57,14 +56,15 @@ public class KakaoApiService {
                 .build()
                 .toUri();
     }
-
-    private static RequestEntity<Void> buildRequestEntity(URI uri) {
+    @Override
+    public RequestEntity<Void> buildRequestEntity(URI uri) {
         return RequestEntity.get(uri)
                 .header("Authorization", "KakaoAK " + "029fe9d698f7b84b9bb093770125665f")
                 .build();
     }
 
-    private static ResponseEntity<String> callKakaoTransCoordApi(RequestEntity<Void> requestEntity) {
+    @Override
+    public ResponseEntity<String> callApi(RequestEntity<Void> requestEntity) {
         RestTemplate restTemplate = new RestTemplate();
         return restTemplate.exchange(requestEntity, String.class);
     }
