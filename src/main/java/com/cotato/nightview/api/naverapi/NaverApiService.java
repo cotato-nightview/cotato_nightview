@@ -47,18 +47,6 @@ public class NaverApiService implements ApiService {
 
     }
 
-    private static URI InitUri() {
-        return UriComponentsBuilder.fromUriString("https://openapi.naver.com")
-                .path("/v1/search/local.json")
-                .queryParam("query", "")
-                .queryParam("display", "5")
-                .queryParam("sort", "random")
-                .encode()
-                .build()
-                .toUri();
-
-    }
-
     @Override
     public URI buildUri(Object InitUri, Object areaName) {
         return UriComponentsBuilder.fromUriString((String) InitUri)
