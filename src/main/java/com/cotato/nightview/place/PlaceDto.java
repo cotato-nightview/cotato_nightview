@@ -1,5 +1,6 @@
 package com.cotato.nightview.place;
 
+import com.cotato.nightview.dong.Dong;
 import lombok.*;
 
 @Getter
@@ -24,13 +25,14 @@ public class PlaceDto {
         this.mapy = mapy;
     }
 
-    public Place toEntity() {
+    public Place toEntity(Dong dong) {
         return Place.builder()
                 .title(title)
                 .address(address)
                 .roadAddress(roadAddress)
                 .longitude(mapx)
                 .latitude(mapy)
+                .dong(dong)
                 .build();
     }
 }

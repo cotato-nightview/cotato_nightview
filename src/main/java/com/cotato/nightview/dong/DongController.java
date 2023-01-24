@@ -14,7 +14,7 @@ public class DongController {
     @GetMapping("/init-dong")
     public String initDong() {
         dongService.initDong();
-        return "success!";
+        return "dong initialize success!";
     }
 
 }

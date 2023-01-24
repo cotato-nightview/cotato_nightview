@@ -13,6 +13,6 @@ public class GuController {
     @GetMapping("/init-gu")
     public String initGu() {
         guService.initGu();
-        return "success!";
+        return "gu initialize success!";
     }
 }

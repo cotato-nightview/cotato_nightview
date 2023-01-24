@@ -15,6 +15,6 @@ public class PlaceController {
     @GetMapping("/init-place")
     public String initPlace() {
         placeService.initPlace();
-        return "";
+        return "place initialize success!";
     }
 }

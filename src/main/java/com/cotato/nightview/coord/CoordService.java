@@ -20,8 +20,6 @@ public class CoordService {
     public Coord transCoord(double mapx, double mapy) {
         // 좌표로 URI 생성
         URI uri = kakaoApiService.buildUri(mapx, mapy);
-        System.out.println("mapx = " + mapx);
-        System.out.println("mapy = " + mapy);
 
         // URI로 요청 엔티티 생성
         RequestEntity<Void> requestEntity = kakaoApiService.buildRequestEntity(uri);

@@ -4,6 +4,8 @@ import com.cotato.nightview.api.kakaoapi.KakaoApiService;
 import com.cotato.nightview.api.naverapi.NaverApiService;
 import com.cotato.nightview.coord.Coord;
 import com.cotato.nightview.coord.CoordService;
+import com.cotato.nightview.dong.Dong;
+import com.cotato.nightview.dong.DongService;
 import com.cotato.nightview.json.JsonService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
@@ -21,6 +23,7 @@ public class PlaceService {
     private final NaverApiService naverApiService;
     private final CoordService coordService;
     private final JsonService jsonService;
+    private final DongService dongService;
 
     public void initPlace() {
         String areaInfoJson = jsonService.readFileAsString("dong_coords.json");
@@ -28,6 +31,7 @@ public class PlaceService {
         // 지역 목록을 JSONArray로 변환
         JSONArray areaInfoArray = jsonService.parseJsonArray(areaInfoJson, "areaInfo");
 
+        int i = 0;
         // 각 지역 목록을 순회하며 장소 탐색
         for (Object areaObj : areaInfoArray) {
             // 429 에러 방지를 위한 delay
@@ -40,6 +44,7 @@ public class PlaceService {
             JSONObject areaObjJson = (JSONObject) areaObj;
             String areaName = areaObjJson.get("dong").toString();
 
+            System.out.println(areaName + "    " + ++i + "/" + areaInfoArray.size());
             // API에서 장소정보 불러와 JSONArray에 저장
             JSONArray placesFromApi = naverApiService.getPlacesFromApi(areaName);
 
@@ -60,18 +65,23 @@ public class PlaceService {
                 Coord coord = coordService.transCoord(dto.getMapx(), dto.getMapy());
                 dto.setMapx(coord.getX());
                 dto.setMapy(coord.getY());
-                savePlace(dto);
+                Dong dong = dongService.getDongFromAddress(dto.getAddress());
+                savePlace(dto, dong);
             }
         }
     }
 
-    public void savePlace(PlaceDto dto) {
-        placeRepository.save(dto.toEntity());
+    public void savePlace(PlaceDto dto, Dong dong) {
+        placeRepository.save(dto.toEntity(dong));
     }
 
     public boolean vaildPlace(PlaceDto dto) {
         // 카테고리가 적절한지 검사
         if (!(dto.getCategory().contains("명소") || dto.getCategory().contains("지명"))) {
+            return false;
+        }
+        // 서울 내에 있는지 검사
+        if (!(dto.getAddress().contains("서울"))) {
             return false;
         }
         // 중복 검사
