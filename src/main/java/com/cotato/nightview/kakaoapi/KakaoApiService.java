@@ -1,6 +1,7 @@
 package com.cotato.nightview.kakaoapi;
 
 import com.cotato.nightview.coord.Coord;
+import com.cotato.nightview.json.JsonService;
 import lombok.RequiredArgsConstructor;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -17,11 +18,13 @@ import java.net.URI;
 @Service
 @RequiredArgsConstructor
 public class KakaoApiService {
+    private final JsonService jsonService;
 
     public Coord transCoord(double mapx, double mapy) {
         // 좌표로 URI 생성
         URI uri = buildUriByCoord(mapx, mapy);
-
+        System.out.println("mapx = " + mapx);
+        System.out.println("mapy = " + mapy);
         // URI로 요청 엔티티 생성
         RequestEntity<Void> requestEntity = buildRequestEntity(uri);
 
@@ -29,7 +32,8 @@ public class KakaoApiService {
         ResponseEntity<String> res = callKakaoTransCoordApi(requestEntity);
 
         // API 응답 중 실제 좌표 정보인 "documents"만 파싱
-        JSONArray jsonArray = parseDocumentsJson(res);
+//        JSONArray jsonArray = parseDocumentsJson(res);
+        JSONArray jsonArray = jsonService.parseJsonArray(res.getBody(),"documents");
 
         // documents를 json 객체로 변환
         JSONObject coordJson = (JSONObject) jsonArray.get(0);
@@ -40,21 +44,6 @@ public class KakaoApiService {
 
     private static Coord jsonToCoord(JSONObject coordJson) {
         return new Coord((double) coordJson.get("x"), (double) coordJson.get("y"));
-    }
-
-    private static JSONArray parseDocumentsJson(ResponseEntity<String> res) {
-        // JSON 파싱을 위한 parser 생성
-        JSONParser parser = new JSONParser();
-
-        JSONObject jsonObject;
-        try {
-            jsonObject = (JSONObject) parser.parse(res.getBody());
-        } catch (ParseException e) {
-            throw new RuntimeException(e);
-        }
-
-        // 응답 Body에서 실제 좌표 반환 객체만 파싱
-        return (JSONArray) jsonObject.get("documents");
     }
 
     private static URI buildUriByCoord(double mapx, double mapy) {

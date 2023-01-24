@@ -12,16 +12,16 @@ public class PlaceDto {
     private String category;
     private String address;
     private String roadAddress;
-    private double longitude;
-    private double latitude;
+    private double mapx;
+    private double mapy;
 
     @Builder
     public PlaceDto(String title, String address, String roadAddress, double mapx, double mapy) {
         this.title = title;
         this.address = address;
         this.roadAddress = roadAddress;
-        this.longitude = mapx;
-        this.latitude = mapy;
+        this.mapx = mapx;
+        this.mapy = mapy;
     }
 
     public Place toEntity() {
@@ -29,8 +29,8 @@ public class PlaceDto {
                 .title(title)
                 .address(address)
                 .roadAddress(roadAddress)
-                .longitude(longitude)
-                .latitude(latitude)
+                .longitude(mapx)
+                .latitude(mapy)
                 .build();
     }
 }

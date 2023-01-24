@@ -1,9 +1,9 @@
 package com.cotato.nightview.naverapi;
 
 import com.cotato.nightview.coord.Coord;
+import com.cotato.nightview.json.JsonService;
 import com.cotato.nightview.kakaoapi.KakaoApiService;
 import com.cotato.nightview.place.PlaceDto;
-import com.cotato.nightview.place.PlaceRepository;
 import com.cotato.nightview.place.PlaceService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
@@ -11,24 +11,20 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
 import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import java.io.IOException;
 import java.net.URI;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 
 @Service
 @RequiredArgsConstructor
 public class NaverApiService {
     private final PlaceService placeService;
     private final KakaoApiService kakaoApiService;
+    private final JsonService jsonService;
 
     public void getPlacesFromApi() {
 
@@ -36,21 +32,23 @@ public class NaverApiService {
         String InitUri = InitUri().toString();
 
         // 지역 목록을 JSONArray로 변환
-        String areaInfoJson = readFileAsString("dong_coords.json");
-        JSONArray areaInfo = parseJsonArray(areaInfoJson, "areaInfo");
+        String areaInfoJson = jsonService.readFileAsString("dong_coords.json");
+        JSONArray areaInfo = jsonService.parseJsonArray(areaInfoJson, "areaInfo");
+
+        System.out.println("areaInfo = " + areaInfo.size());
         int i = 0;
         for (Object areaObj : areaInfo) {
+            // 429 에러 방지를 위한 delay
             try {
                 Thread.sleep(70);
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }
-            System.out.println("areaInfo = " + areaInfo.size());
-            JSONObject areaObjJson = (JSONObject) areaObj;
-            String dong = areaObjJson.get("gu").toString();
-            System.out.println("gu = " + dong + i++);
 
-            URI uri1 = buildUriByAreaName(InitUri, dong);
+            JSONObject areaObjJson = (JSONObject) areaObj;
+            String areaName = areaObjJson.get("dong").toString();
+
+            URI uri1 = buildUriByAreaName(InitUri, areaName);
 
             // URI로 요청 엔티티 생성
             RequestEntity<Void> requestEntity = buildRequestEntity(uri1);
@@ -59,15 +57,16 @@ public class NaverApiService {
             ResponseEntity<String> res = callNaverApi(requestEntity);
 
             // API 응답 중 실제 장소 정보인 "items"만 파싱
-            JSONArray items = parseJsonArray(res.getBody(), "items");
+            JSONArray items = jsonService.parseJsonArray(res.getBody(), "items");
 
             // items를 실제 Dto로 변환
             PlaceDto placeDtos[] = itemsToDto(items);
             for (PlaceDto dto : placeDtos) {
                 if (placeService.vaildPlace(dto)) {
-                    Coord coord = kakaoApiService.transCoord(dto.getLongitude(), dto.getLatitude());
-                    dto.setLongitude(coord.getX());
-                    dto.setLatitude(coord.getY());
+                    // 좌표계 변환 후 DB에 저장
+                    Coord coord = kakaoApiService.transCoord(dto.getMapx(), dto.getMapy());
+                    dto.setMapx(coord.getX());
+                    dto.setMapy(coord.getY());
                     placeService.savePlace(dto);
                 }
             }
@@ -98,29 +97,6 @@ public class NaverApiService {
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }
-    }
-
-    private static String readFileAsString(String file) {
-        try {
-            return new String(Files.readAllBytes(Paths.get(file)));
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    private static JSONArray parseJsonArray(String jsonString, String arrayName) {
-        // JSON 파싱을 위한 parser 생성
-        JSONParser parser = new JSONParser();
-
-        JSONObject jsonObject;
-        try {
-            jsonObject = (JSONObject) parser.parse(jsonString);
-        } catch (ParseException e) {
-            throw new RuntimeException(e);
-        }
-
-        // 응답 Body에서 장소 정보들만 JSONArray로 바꿈
-        return (JSONArray) jsonObject.get(arrayName);
     }
 
     private static URI InitUri() {

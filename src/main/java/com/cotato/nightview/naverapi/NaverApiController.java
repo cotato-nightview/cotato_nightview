@@ -11,8 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class NaverApiController {
     private final NaverApiService naverApiService;
-    private final KakaoApiService kakaoApiService;
-    @GetMapping("/naver")
+    @GetMapping("/naver/insert-place")
     public String naverApi() {
         naverApiService.getPlacesFromApi();
         return "";
