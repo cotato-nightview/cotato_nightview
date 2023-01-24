@@ -1,4 +1,4 @@
-package com.cotato.nightview.naverapi;
+package com.cotato.nightview.place;
 
 import lombok.Builder;
 import lombok.Getter;
@@ -20,15 +20,15 @@ public class Place {
     private String title;
     private String address;
     private String roadAddress;
-    private double mapx;
-    private double mapy;
+    private double longitude;
+    private double latitude;
 
     @Builder
-    public Place(String title, String address, String roadAddress, double mapx, double mapy) {
+    public Place(String title, String address, String roadAddress, double longitude, double latitude) {
         this.title = title;
         this.address = address;
         this.roadAddress = roadAddress;
-        this.mapx = mapx;
-        this.mapy = mapy;
+        this.longitude = longitude;
+        this.latitude = latitude;
     }
 }

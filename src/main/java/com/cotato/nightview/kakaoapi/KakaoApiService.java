@@ -1,6 +1,6 @@
 package com.cotato.nightview.kakaoapi;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.cotato.nightview.coord.Coord;
 import lombok.RequiredArgsConstructor;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -12,9 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import javax.lang.model.SourceVersion;
 import java.net.URI;
-import java.util.Map;
 
 @Service
 @RequiredArgsConstructor

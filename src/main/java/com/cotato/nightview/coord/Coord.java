@@ -1,4 +1,4 @@
-package com.cotato.nightview.kakaoapi;
+package com.cotato.nightview.coord;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

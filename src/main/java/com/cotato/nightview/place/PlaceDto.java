@@ -1,6 +1,5 @@
-package com.cotato.nightview.naverapi;
+package com.cotato.nightview.place;
 
-import jdk.jfr.Category;
 import lombok.*;
 
 @Getter
@@ -13,16 +12,16 @@ public class PlaceDto {
     private String category;
     private String address;
     private String roadAddress;
-    private double mapx;
-    private double mapy;
+    private double longitude;
+    private double latitude;
 
     @Builder
     public PlaceDto(String title, String address, String roadAddress, double mapx, double mapy) {
         this.title = title;
         this.address = address;
         this.roadAddress = roadAddress;
-        this.mapx = mapx;
-        this.mapy = mapy;
+        this.longitude = mapx;
+        this.latitude = mapy;
     }
 
     public Place toEntity() {
@@ -30,8 +29,8 @@ public class PlaceDto {
                 .title(title)
                 .address(address)
                 .roadAddress(roadAddress)
-                .mapx(mapx)
-                .mapy(mapy)
+                .longitude(longitude)
+                .latitude(latitude)
                 .build();
     }
 }
