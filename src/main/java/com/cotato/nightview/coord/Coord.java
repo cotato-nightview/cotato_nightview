@@ -18,4 +18,6 @@ public class Coord {
         this.x = Math.round(this.x*1000000)/1000000.0;
         this.y = Math.round(this.y*1000000)/1000000.0;
     }
+
+
 }
