@@ -1,6 +1,5 @@
 package com.cotato.nightview.place;
 
-import com.cotato.nightview.api.kakaoapi.KakaoApiService;
 import com.cotato.nightview.api.naverapi.NaverApiService;
 import com.cotato.nightview.coord.Coord;
 import com.cotato.nightview.coord.CoordService;
@@ -13,7 +12,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
-import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -45,8 +43,9 @@ public class PlaceService {
             String areaName = areaObjJson.get("dong").toString();
 
             System.out.println(areaName + "    " + ++i + "/" + areaInfoArray.size());
+
             // API에서 장소정보 불러와 JSONArray에 저장
-            JSONArray placesFromApi = naverApiService.getPlacesFromApi(areaName);
+            JSONArray placesFromApi = naverApiService.getPlacesFromApi(areaName + " 야경");
 
             // JSONArray를 dto 배열로 변환
             PlaceDto placeDtos[] = itemsToDto(placesFromApi);
@@ -57,14 +56,39 @@ public class PlaceService {
 
     }
 
+    public String insertPlace(String name) {
+        JSONArray placesFromApi = naverApiService.getPlacesFromApi(name);
+
+        PlaceDto[] placeDtos = itemsToDto(placesFromApi);
+        PlaceDto dto = removeHtmlTags(placeDtos[0]);
+
+        if(vaildPlace(dto)){
+            setCoord(dto);
+            Dong dong = dongService.getDongFromAddress(dto.getAddress());
+            savePlace(dto, dong);
+
+            return dto.toString();
+        }
+
+        return "not proper place";
+    }
+
+    private void setCoord(PlaceDto dto) {
+        Coord coord = coordService.transCoord(dto.getMapx(), dto.getMapy());
+        dto.setMapx(coord.getX());
+        dto.setMapy(coord.getY());
+    }
+
+    private static PlaceDto removeHtmlTags(PlaceDto dto) {
+        dto.setTitle(dto.getTitle().replaceAll("<(/)?([a-zA-Z]*)(\\s[a-zA-Z]*=[^>]*)?(\\s)*(/)?>", ""));
+        return dto;
+    }
 
     public void savePlaces(PlaceDto[] placeDtos) {
         for (PlaceDto dto : placeDtos) {
             if (vaildPlace(dto)) {
                 // 좌표계 변환 후 DB에 저장
-                Coord coord = coordService.transCoord(dto.getMapx(), dto.getMapy());
-                dto.setMapx(coord.getX());
-                dto.setMapy(coord.getY());
+                setCoord(dto);
                 Dong dong = dongService.getDongFromAddress(dto.getAddress());
                 savePlace(dto, dong);
             }

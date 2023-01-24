@@ -4,6 +4,7 @@ import com.cotato.nightview.place.PlaceService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -16,5 +17,10 @@ public class PlaceController {
     public String initPlace() {
         placeService.initPlace();
         return "place initialize success!";
+    }
+
+    @GetMapping("/insert")
+    public String insertPlace(@RequestParam String name) {
+        return placeService.insertPlace(name);
     }
 }

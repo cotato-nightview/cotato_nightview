@@ -35,4 +35,14 @@ public class PlaceDto {
                 .dong(dong)
                 .build();
     }
+
+    @Override
+    public String toString() {
+        return "PlaceDto{" +
+                "id=" + id +
+                ", title='" + title + '\'' +
+                ", address='" + address + '\'' +
+                ", roadAddress='" + roadAddress + '\'' +
+                '}';
+    }
 }

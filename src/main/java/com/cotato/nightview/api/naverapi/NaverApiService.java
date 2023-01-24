@@ -25,13 +25,13 @@ import java.net.URI;
 public class NaverApiService implements ApiService {
     private final JsonService jsonService;
 
-    public JSONArray getPlacesFromApi(String areaName) {
+    public JSONArray getPlacesFromApi(String param) {
 
         // 초기 URI 생성
         String InitUri = "https://openapi.naver.com";
 
         // 지역 이름으로 uri 생성
-        URI uri = buildUri(InitUri, areaName);
+        URI uri = buildUri(InitUri, param);
 
         // URI로 요청 엔티티 생성
         RequestEntity<Void> requestEntity = buildRequestEntity(uri);
@@ -48,10 +48,10 @@ public class NaverApiService implements ApiService {
     }
 
     @Override
-    public URI buildUri(Object InitUri, Object areaName) {
+    public URI buildUri(Object InitUri, Object param) {
         return UriComponentsBuilder.fromUriString((String) InitUri)
                 .path("/v1/search/local.json")
-                .queryParam("query", areaName + " 야경")
+                .queryParam("query", param)
                 .queryParam("display", "5")
                 .queryParam("sort", "random")
                 .encode()
