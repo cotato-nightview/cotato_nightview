@@ -1,17 +1,9 @@
 package com.cotato.nightview.api.naverapi;
 
 import com.cotato.nightview.api.ApiService;
-import com.cotato.nightview.coord.Coord;
 import com.cotato.nightview.json.JsonService;
-import com.cotato.nightview.api.kakaoapi.KakaoApiService;
-import com.cotato.nightview.place.PlaceDto;
-import com.cotato.nightview.place.PlaceService;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.http.RequestEntity;

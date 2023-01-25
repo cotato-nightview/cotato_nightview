@@ -2,9 +2,7 @@ package com.cotato.nightview.api.kakaoapi;
 
 import com.cotato.nightview.api.ApiService;
 import com.cotato.nightview.coord.Coord;
-import com.cotato.nightview.json.JsonService;
 import lombok.RequiredArgsConstructor;
-import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;

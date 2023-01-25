@@ -1,6 +1,5 @@
 package com.cotato.nightview.gu;
 
-import lombok.RequiredArgsConstructor;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
