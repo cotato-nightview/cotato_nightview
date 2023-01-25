@@ -1,6 +1,5 @@
 package com.cotato.nightview.place;
 
-import com.cotato.nightview.place.PlaceService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
