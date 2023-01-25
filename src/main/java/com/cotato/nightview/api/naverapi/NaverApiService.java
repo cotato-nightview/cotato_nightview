@@ -12,6 +12,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -22,7 +24,12 @@ import java.net.URI;
 
 @Service
 @RequiredArgsConstructor
+@PropertySource("classpath:config.properties")
 public class NaverApiService implements ApiService {
+    @Value("${X-Naver-Client-ID}")
+    private String xNaverClientId;
+    @Value("${X-Naver-Client-Secret}")
+    private String xNaverClientSecret;
     private final JsonService jsonService;
 
     public JSONArray getPlacesFromApi(String param) {
@@ -62,8 +69,8 @@ public class NaverApiService implements ApiService {
     @Override
     public RequestEntity<Void> buildRequestEntity(URI uri) {
         return RequestEntity.get(uri)
-                .header("X-Naver-Client-ID", "rs3jbPtyp96zx_0CSktZ")
-                .header("X-Naver-Client-Secret", "QtBYuGAEHT")
+                .header("X-Naver-Client-ID", xNaverClientId)
+                .header("X-Naver-Client-Secret", xNaverClientSecret)
                 .build();
     }
 

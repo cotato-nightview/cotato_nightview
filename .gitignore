@@ -38,3 +38,4 @@ out/
 
 ### custom ###
 .idea/workspace.xml
+config.properties
