@@ -38,4 +38,5 @@ out/
 
 ### custom ###
 .idea/workspace.xml
-config.properties
+config.properties   ###추가된 것
+
