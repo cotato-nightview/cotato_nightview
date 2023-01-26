@@ -57,10 +57,18 @@ public class PlaceService {
     }
 
     public String insertPlace(String name) {
+
         JSONArray placesFromApi = naverApiService.getPlacesFromApi(name);
 
         PlaceDto[] placeDtos = itemsToDto(placesFromApi);
-        PlaceDto dto = removeHtmlTags(placeDtos[0]);
+
+        PlaceDto dto = null;
+
+        try {
+            dto = removeHtmlTags(placeDtos[0]);
+        } catch (ArrayIndexOutOfBoundsException e) {
+            return "no search result";
+        }
 
         if(vaildPlace(dto)){
             setCoord(dto);

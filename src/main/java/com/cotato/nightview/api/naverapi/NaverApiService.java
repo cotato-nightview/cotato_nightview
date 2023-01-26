@@ -31,7 +31,7 @@ public class NaverApiService implements ApiService {
 
         // 지역 이름으로 uri 생성
         URI uri = buildUri(InitUri, param);
-
+        System.out.println("uri.toString() = " + uri.toString());
         // URI로 요청 엔티티 생성
         RequestEntity<Void> requestEntity = buildRequestEntity(uri);
 
