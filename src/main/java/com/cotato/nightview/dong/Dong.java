@@ -1,6 +1,7 @@
 package com.cotato.nightview.dong;
 
 import com.cotato.nightview.gu.Gu;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

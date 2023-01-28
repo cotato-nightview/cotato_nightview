@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.3/font/bootstrap-icons.css">
+
+    <script type="text/javascript" id="kakao"
+            src="//dapi.kakao.com/v2/maps/sdk.js?appkey=키를 입력하세요"></script>
+    <style>
+        #map {
+            width: 100vw;
+            height: 100vh;
+        }
+
+        #signin, #logout {
+            position: absolute;
+            right: 20px;
+            top: 20px;
+        }
+
+        #login {
+            position: absolute;
+            right: 110px;
+            top: 20px;
+        }
+
+        .btn {
+            z-index: 2;
+        }
+
+        #sidebar {
+            z-index: 2;
+            height: 100vh;
+            width: 380px;
+        }
+
+        .scrollarea {
+            overflow-y: auto;
+        }
+
+        #info-panel {
+            width: 380px;
+            display: none;
+            z-index: 2;
+            float: right;
+        }
+
+        .info-content {
+            display: none;
+            height: 100vh;
+            z-index: 2;
+            background-color: white;
+        }
+    </style>
+</head>
+
+<body>
+
+<button sec:authorize="isAnonymous()" type="button" id="login" class="btn btn-primary"
+        onclick="">Login
+</button>
+<button sec:authorize="isAnonymous()" type="button" id="signin" class="btn btn-primary"
+        onclick="">Sign in
+</button>
+<button sec:authorize="isAuthenticated()" type="button" id="logout" class="btn btn-primary"
+        onclick="">Logout
+</button>
+<div id="map">
+    <div style="display: flex">
+        <div class="d-flex flex-column align-items-stretch flex-shrink-0 bg-white" id="sidebar">
+            <div class="list-group list-group-flush border-bottom scrollarea">
+                <!--                <a href="#" class="list-group-item list-group-item-action active py-3 lh-sm" aria-current="true"-->
+                <!--                   th:each="place : ${placeList}">-->
+                <!--                    <div class="d-flex w-100 align-items-center justify-content-between">-->
+                <!--                        <strong class="mb-1" th:text="${place.title}"></strong>-->
+                <!--                        <small></small>-->
+                <!--                    </div>-->
+                <!--                    <div class="col-10 mb-1 small" th:text="${place.address}"></div>-->
+                <!--                </a>-->
+                <a href="#" class="list-group-item list-group-item-action py-3 lh-sm" th:each="place : ${placeList}">
+                    <div class="d-flex w-100 align-items-center justify-content-between">
+                        <strong class="mb-1" th:text="${place.title}"></strong>
+                        <small class="text-muted"></small>
+                    </div>
+                    <div class="col-10 mb-1 small" th:text="${place.address}"></div>
+                </a>
+                <!--                <a href="#" class="list-group-item list-group-item-action py-3 lh-sm">-->
+                <!--                    <div class="d-flex w-100 align-items-center justify-content-between">-->
+                <!--                        <strong class="mb-1">List group item heading</strong>-->
+                <!--                        <small class="text-muted">Mon</small>-->
+                <!--                    </div>-->
+                <!--                    <div class="col-10 mb-1 small">Some placeholder content in a paragraph below the heading and date.-->
+                <!--                    </div>-->
+                <!--                </a>-->
+
+                <!--                <a href="#" class="list-group-item list-group-item-action py-3 lh-sm" aria-current="true">-->
+                <!--                    <div class="d-flex w-100 align-items-center justify-content-between">-->
+                <!--                        <strong class="mb-1">List group item heading</strong>-->
+                <!--                        <small class="text-muted">Wed</small>-->
+                <!--                    </div>-->
+                <!--                    <div class="col-10 mb-1 small">Some placeholder content in a paragraph below the heading and date.-->
+                <!--                    </div>-->
+                <!--                </a>-->
+                <!--                <a href="#" class="list-group-item list-group-item-action py-3 lh-sm">-->
+                <!--                    <div class="d-flex w-100 align-items-center justify-content-between">-->
+                <!--                        <strong class="mb-1">List group item heading</strong>-->
+                <!--                        <small class="text-muted">Tues</small>-->
+                <!--                    </div>-->
+                <!--                    <div class="col-10 mb-1 small">Some placeholder content in a paragraph below the heading and date.-->
+                <!--                    </div>-->
+                <!--                </a>-->
+                <!--                <a href="#" class="list-group-item list-group-item-action py-3 lh-sm">-->
+                <!--                    <div class="d-flex w-100 align-items-center justify-content-between">-->
+                <!--                        <strong class="mb-1">List group item heading</strong>-->
+                <!--                        <small class="text-muted">Mon</small>-->
+                <!--                    </div>-->
+                <!--                    <div class="col-10 mb-1 small">Some placeholder content in a paragraph below the heading and date.-->
+                <!--                    </div>-->
+                <!--                </a>-->
+                <!--                <a href="#" class="list-group-item list-group-item-action py-3 lh-sm" aria-current="true">-->
+                <!--                    <div class="d-flex w-100 align-items-center justify-content-between">-->
+                <!--                        <strong class="mb-1">List group item heading</strong>-->
+                <!--                        <small class="text-muted">Wed</small>-->
+                <!--                    </div>-->
+                <!--                    <div class="col-10 mb-1 small">Some placeholder content in a paragraph below the heading and date.-->
+                <!--                    </div>-->
+                <!--                </a>-->
+                <!--                <a href="#" class="list-group-item list-group-item-action py-3 lh-sm">-->
+                <!--                    <div class="d-flex w-100 align-items-center justify-content-between">-->
+                <!--                        <strong class="mb-1">List group item heading</strong>-->
+                <!--                        <small class="text-muted">Tues</small>-->
+                <!--                    </div>-->
+                <!--                    <div class="col-10 mb-1 small">Some placeholder content in a paragraph below the heading and date.-->
+                <!--                    </div>-->
+                <!--                </a>-->
+                <!--                <a href="#" class="list-group-item list-group-item-action py-3 lh-sm">-->
+                <!--                    <div class="d-flex w-100 align-items-center justify-content-between">-->
+                <!--                        <strong class="mb-1">List group item heading</strong>-->
+                <!--                        <small class="text-muted">Mon</small>-->
+                <!--                    </div>-->
+                <!--                    <div class="col-10 mb-1 small">Some placeholder content in a paragraph below the heading and date.-->
+                <!--                    </div>-->
+                <!--                </a>-->
+                <!--                <a href="#" class="list-group-item list-group-item-action py-3 lh-sm" aria-current="true">-->
+                <!--                    <div class="d-flex w-100 align-items-center justify-content-between">-->
+                <!--                        <strong class="mb-1">List group item heading</strong>-->
+                <!--                        <small class="text-muted">Wed</small>-->
+                <!--                    </div>-->
+                <!--                    <div class="col-10 mb-1 small">Some placeholder content in a paragraph below the heading and date.-->
+                <!--                    </div>-->
+                <!--                </a>-->
+                <!--                <a href="#" class="list-group-item list-group-item-action py-3 lh-sm">-->
+                <!--                    <div class="d-flex w-100 align-items-center justify-content-between">-->
+                <!--                        <strong class="mb-1">List group item heading</strong>-->
+                <!--                        <small class="text-muted">Tues</small>-->
+                <!--                    </div>-->
+                <!--                    <div class="col-10 mb-1 small">Some placeholder content in a paragraph below the heading and date.-->
+                <!--                    </div>-->
+                <!--                </a>-->
+                <!--                <a href="#" class="list-group-item list-group-item-action py-3 lh-sm">-->
+                <!--                    <div class="d-flex w-100 align-items-center justify-content-between">-->
+                <!--                        <strong class="mb-1">List group item heading</strong>-->
+                <!--                        <small class="text-muted">Mon</small>-->
+                <!--                    </div>-->
+                <!--                    <div class="col-10 mb-1 small">Some placeholder content in a paragraph below the heading and date.-->
+                <!--                    </div>-->
+                <!--                </a>-->
+            </div>
+        </div>
+        <div id="info-panel">
+            <div id="item1-info" class="info-content">
+                Information about Item 1
+            </div>
+            <div id="item2-info" class="info-content">
+                Information about Item 2
+            </div>
+            <div id="item3-info" class="info-content">
+                Information about Item 3
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<!--<script th:inline="javascript">-->
+<!--    var defaultPlace = [[${defaultPlace}]];-->
+<!--</script>-->
+<script th:inline="javascript">
+
+    var defaultLongitude = [[${defaultPlace.longitude}]];
+    var defaultLatitude = [[${defaultPlace.latitude}]];
+    var container = document.getElementById('map');
+    var options = {
+        center: new kakao.maps.LatLng(defaultLatitude, defaultLongitude),
+        level: 3
+    };
+    var map = new kakao.maps.Map(container, options);
+
+    let infoContent = document.getElementsByClassName('info-content');
+    for(var i =0;i<3;i++){
+        infoContent[i].addEventListener("click",function () {
+            this.style.display="none";
+        })
+    }
+
+    var items = document.getElementsByClassName("list-group-item");
+    // for(var i = 0; i < 3; i++) {
+    //     items[i].addEventListener("click", function () {
+    //         var infoPanel = document.getElementById("info-panel");
+    //         // var infoContent = document.getElementById("item${i}-info");
+    //         i++
+    //         var infoContent = document.getElementById("item"+(i)+"-info");
+    //         infoPanel.style.display = "block";
+    //         infoContent.style.display = "block";
+    //     });
+    // }
+    var last_click;
+    items[1].addEventListener("click", function () {
+        if (last_click != undefined) {
+            last_click.style.display = "none";
+        }
+        var infoPanel = document.getElementById("info-panel");
+        var infoContent = document.getElementById("item" + 1 + "-info");
+        last_click = infoContent;
+        infoPanel.style.display = "block";
+        infoContent.style.display = "block";
+    })
+    items[2].addEventListener("click", function () {
+        if (last_click != undefined) {
+            last_click.style.display = "none";
+        }
+        var infoPanel = document.getElementById("info-panel");
+        var infoContent = document.getElementById("item" + 2 + "-info");
+        last_click = infoContent;
+        infoPanel.style.display = "block";
+        infoContent.style.display = "block";
+    })
+    items[3].addEventListener("click", function () {
+        if (last_click != undefined) {
+            last_click.style.display = "none";
+        }
+        var infoPanel = document.getElementById("info-panel");
+        var infoContent = document.getElementById("item" + 3 + "-info");
+        last_click = infoContent;
+        infoPanel.style.display = "block";
+        infoContent.style.display = "block";
+    })
+</script>
+
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4"
+        crossorigin="anonymous"></script>
+</body>
+</html>

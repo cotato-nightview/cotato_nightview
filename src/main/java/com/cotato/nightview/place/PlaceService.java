@@ -14,6 +14,8 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class PlaceService {
@@ -138,4 +140,11 @@ public class PlaceService {
         }
     }
 
+    public Place findByTitle(String title){
+        return placeRepository.findByTitle(title);
+    }
+
+    public List<Place> findAll(){
+        return placeRepository.findAll();
+    }
 }

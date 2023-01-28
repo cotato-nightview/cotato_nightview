@@ -1,6 +1,7 @@
 package com.cotato.nightview.place;
 
 import com.cotato.nightview.dong.Dong;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -38,5 +39,18 @@ public class Place {
         this.longitude = longitude;
         this.latitude = latitude;
         this.dong = dong;
+    }
+
+    @Override
+    public String toString() {
+        return "Place{" +
+                "id=" + id +
+                ", title='" + title + '\'' +
+                ", address='" + address + '\'' +
+                ", roadAddress='" + roadAddress + '\'' +
+                ", longitude=" + longitude +
+                ", latitude=" + latitude +
+                ", dong=" + dong +
+                '}';
     }
 }
