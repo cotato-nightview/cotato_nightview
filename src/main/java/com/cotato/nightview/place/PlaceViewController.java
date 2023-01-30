@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import javax.lang.model.SourceVersion;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Controller
 @RequiredArgsConstructor
@@ -24,22 +26,19 @@ public class PlaceViewController {
     //    default map
     @GetMapping("/map")
     public String mapDefault(Model model) {
+
+        // 디폴트 좌표값 설정을 위한 장소
         Place defaultPlace = placeService.findByTitle("경복궁");
         model.addAttribute("defaultPlace", defaultPlace);
 
-        List<Place> placeList = placeService.findAll();
-        model.addAttribute("placeList", placeList);
+        // Entity List를 Dto List로 변경
+        List<Place> placeEntityList = placeService.findAll();
+        List<PlaceDto> placeDtoList = placeEntityList
+                .stream()
+                .map(place -> modelMapper.map(place, PlaceDto.class))
+                .collect(Collectors.toList());
 
-        TypeMap<Place, PlaceDto> typeMap = modelMapper.createTypeMap(Place.class, PlaceDto.class);
-        typeMap.addMappings(mapper -> {
-            mapper.map(Place::getLatitude, PlaceDto::setMapy);
-            mapper.map(Place::getLongitude, PlaceDto::setMapx);
-        });
-//        modelMapper.createTypeMap(Place.class,PlaceDto.class)
-//                .addMapping(Place::getLongitude,PlaceDto::setMapy)
-//                .addMapping(Place::getLatitude,PlaceDto::setMapy);
-        PlaceDto map = modelMapper.map(defaultPlace, PlaceDto.class);
-        System.out.println(map.toString());
+        model.addAttribute("placeDtoList", placeDtoList);
         return "map/map";
     }
 }

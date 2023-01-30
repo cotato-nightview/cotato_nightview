@@ -1,6 +1,7 @@
 package com.cotato.nightview.place;
 
 import com.cotato.nightview.dong.Dong;
+import com.fasterxml.jackson.annotation.JsonAlias;
 import lombok.*;
 
 @Getter
@@ -13,16 +14,19 @@ public class PlaceDto {
     private String category;
     private String address;
     private String roadAddress;
-    private double mapx;
-    private double mapy;
+    @JsonAlias("mapx")
+    private double longitude;
+    @JsonAlias("mapy")
+
+    private double latitude;
 
     @Builder
-    public PlaceDto(String title, String address, String roadAddress, double mapx, double mapy) {
+    public PlaceDto(String title, String address, String roadAddress, double longitude, double latitude) {
         this.title = title;
         this.address = address;
         this.roadAddress = roadAddress;
-        this.mapx = mapx;
-        this.mapy = mapy;
+        this.longitude = longitude;
+        this.latitude = latitude;
     }
 
     public Place toEntity(Dong dong) {
@@ -30,8 +34,8 @@ public class PlaceDto {
                 .title(title)
                 .address(address)
                 .roadAddress(roadAddress)
-                .longitude(mapx)
-                .latitude(mapy)
+                .longitude(longitude)
+                .latitude(latitude)
                 .dong(dong)
                 .build();
     }
@@ -41,8 +45,11 @@ public class PlaceDto {
         return "PlaceDto{" +
                 "id=" + id +
                 ", title='" + title + '\'' +
+                ", category='" + category + '\'' +
                 ", address='" + address + '\'' +
                 ", roadAddress='" + roadAddress + '\'' +
+                ", longitude=" + longitude +
+                ", latitude=" + latitude +
                 '}';
     }
 }

@@ -74,9 +74,18 @@
     <div style="display: flex">
         <div class="d-flex flex-column align-items-stretch flex-shrink-0 bg-white" id="sidebar">
             <div class="list-group list-group-flush border-bottom scrollarea">
-
+                <div href="/"
+                     class="d-flex align-items-center flex-shrink-0 p-3 link-dark text-decoration-none border-bottom">
+                    <div class="input-group rounded">
+                        <input type="search" class="form-control rounded" placeholder="Search" aria-label="Search"
+                               aria-describedby="search-addon"/>
+                        <button type="submit" class="input-group-text border-0" id="search-addon">
+                             <i class="bi bi-search"></i>
+                         </button>
+                    </div>
+                </div>
                 <!--                db에서 가져온 요소를 반복해서 출력-->
-                <a href="#" class="list-group-item list-group-item-action py-3 lh-sm" th:each="place : ${placeList}">
+                <a href="#" class="list-group-item list-group-item-action py-3 lh-sm" th:each="place : ${placeDtoList}">
                     <div class="d-flex w-100 align-items-center justify-content-between">
                         <strong class="mb-1" th:text="${place.title}"></strong>
                         <small class="text-muted"></small>
@@ -104,18 +113,17 @@
 </div>
 
 
+<script th:src="@{/js/kakaoMap.js}"></script>
 <script th:inline="javascript">
-    var placeList = [[${testclass}]];
-    var listLength = [[${placeList.size()}]];
+    var placeList = [[${placeDtoList}]];
     var defaultLongitude = [[${defaultPlace.longitude}]];
     var defaultLatitude = [[${defaultPlace.latitude}]];
-    var container = document.getElementById('map');
-    var options = {
-        center: new kakao.maps.LatLng(defaultLatitude, defaultLongitude),
-        level: 3
-    };
-    var map = new kakao.maps.Map(container, options);
 
+    var map = showMap(defaultLatitude, defaultLongitude);
+
+    makeMarkers(map, placeList);
+
+    // 항목 이미 표시된 항목 클릭시 다시 사라지게 함
     let infoContent = document.getElementsByClassName('info-content');
     for (var i = 0; i < 3; i++) {
         infoContent[i].addEventListener("click", function () {
@@ -123,6 +131,7 @@
         })
     }
 
+    // 항목 클릭 시 정보 표시
     var items = document.getElementsByClassName("list-group-item");
     // for(var i = 0; i < 3; i++) {
     //     items[i].addEventListener("click", function () {
@@ -145,26 +154,26 @@
         infoPanel.style.display = "block";
         infoContent.style.display = "block";
     })
-    items[2].addEventListener("click", function () {
-        if (last_click != undefined) {
-            last_click.style.display = "none";
-        }
-        var infoPanel = document.getElementById("info-panel");
-        var infoContent = document.getElementById("item" + 2 + "-info");
-        last_click = infoContent;
-        infoPanel.style.display = "block";
-        infoContent.style.display = "block";
-    })
-    items[3].addEventListener("click", function () {
-        if (last_click != undefined) {
-            last_click.style.display = "none";
-        }
-        var infoPanel = document.getElementById("info-panel");
-        var infoContent = document.getElementById("item" + 3 + "-info");
-        last_click = infoContent;
-        infoPanel.style.display = "block";
-        infoContent.style.display = "block";
-    })
+    // items[2].addEventListener("click", function () {
+    //     if (last_click != undefined) {
+    //         last_click.style.display = "none";
+    //     }
+    //     var infoPanel = document.getElementById("info-panel");
+    //     var infoContent = document.getElementById("item" + 2 + "-info");
+    //     last_click = infoContent;
+    //     infoPanel.style.display = "block";
+    //     infoContent.style.display = "block";
+    // })
+    // items[3].addEventListener("click", function () {
+    //     if (last_click != undefined) {
+    //         last_click.style.display = "none";
+    //     }
+    //     var infoPanel = document.getElementById("info-panel");
+    //     var infoContent = document.getElementById("item" + 3 + "-info");
+    //     last_click = infoContent;
+    //     infoPanel.style.display = "block";
+    //     infoContent.style.display = "block";
+    // })
 </script>
 
 

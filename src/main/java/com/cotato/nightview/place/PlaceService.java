@@ -84,9 +84,9 @@ public class PlaceService {
     }
 
     private void setCoord(PlaceDto dto) {
-        Coord coord = coordService.transCoord(dto.getMapx(), dto.getMapy());
-        dto.setMapx(coord.getX());
-        dto.setMapy(coord.getY());
+        Coord coord = coordService.transCoord(dto.getLongitude(), dto.getLatitude());
+        dto.setLongitude(coord.getX());
+        dto.setLatitude(coord.getY());
     }
 
     private static PlaceDto removeHtmlTags(PlaceDto dto) {

@@ -21,9 +21,10 @@ public class KakaoApiService implements ApiService {
     @Value("${Kakao-Rest-Api-Key}")
     private String kakaoRestApiKey;
 
-    private static Coord jsonToCoord(JSONObject coordJson) {
-        return new Coord((double) coordJson.get("x"), (double) coordJson.get("y"));
-    }
+//    private static Coord jsonToCoord(JSONObject coordJson) {
+//        return new Coord((double) coordJson.get("x"), (double) coordJson.get("y"));
+//    }
+
     @Override
     public URI buildUri(Object mapx, Object mapy) {
         return UriComponentsBuilder.fromUriString("http://dapi.kakao.com")

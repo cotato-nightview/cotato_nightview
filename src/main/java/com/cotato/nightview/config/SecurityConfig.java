@@ -19,7 +19,7 @@ public class SecurityConfig {
 
     @Bean
     public WebSecurityCustomizer webSecurityCustomizer() {
-        return (web) -> web.ignoring().antMatchers("/css/**", "/js/**", "/img/**", "/lib/**");
+        return (web) -> web.ignoring().antMatchers("/resources/**");
     }
 
     @Bean
@@ -31,7 +31,6 @@ public class SecurityConfig {
     protected SecurityFilterChain configure(HttpSecurity http) throws Exception {
         http.authorizeHttpRequests()
                 .antMatchers("/").permitAll();
-
         return http.build();
     }
 
