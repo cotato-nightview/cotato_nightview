@@ -3,7 +3,7 @@
       xmlns:th="http://www.thymeleaf.org"
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
-    <meta charset="UTF-8">
+    <meta charset="UTF-8" name="viewport">
     <title>Title</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet"
           integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
@@ -43,14 +43,14 @@
             overflow-y: auto;
         }
 
-        #info-panel {
+        #place-panel {
             width: 380px;
             display: none;
             z-index: 2;
             float: right;
         }
 
-        .info-content {
+        .place-info {
             display: none;
             height: 100vh;
             z-index: 2;
@@ -80,12 +80,12 @@
                         <input type="search" class="form-control rounded" placeholder="Search" aria-label="Search"
                                aria-describedby="search-addon"/>
                         <button type="submit" class="input-group-text border-0" id="search-addon">
-                             <i class="bi bi-search"></i>
-                         </button>
+                            <i class="bi bi-search"></i>
+                        </button>
                     </div>
                 </div>
                 <!--                db에서 가져온 요소를 반복해서 출력-->
-                <a href="#" class="list-group-item list-group-item-action py-3 lh-sm" th:each="place : ${placeDtoList}">
+                <a href="#" class="list-group-item list-group-item-action py-3 lh-sm" th:id="'place'+${place.id}" th:each="place : ${placeDtoList}">
                     <div class="d-flex w-100 align-items-center justify-content-between">
                         <strong class="mb-1" th:text="${place.title}"></strong>
                         <small class="text-muted"></small>
@@ -96,17 +96,12 @@
             </div>
         </div>
 
-        <!--        목록 클릭시 정보 표시되게 하는 테스트 태그-->
-        <div id="info-panel">
-            <div id="item1-info" class="info-content">
-                Information about Item 1
+        <!--목록 클릭시 표시되는 정보들-->
+        <div id="place-panel">
+            <div th:id="'place'+${place.id}+'-info'" class="place-info" th:each="place : ${placeDtoList}" >
+                <a th:text="${place.title}" th:href="@{'https://map.kakao.com/link/to/'+${place.title} + ',' + ${place.latitude} + ',' + ${place.longitude}}" ></a>
             </div>
-            <div id="item2-info" class="info-content">
-                Information about Item 2
-            </div>
-            <div id="item3-info" class="info-content">
-                Information about Item 3
-            </div>
+
         </div>
     </div>
 
@@ -121,59 +116,36 @@
 
     var map = showMap(defaultLatitude, defaultLongitude);
 
+    // 마커 생성
     makeMarkers(map, placeList);
 
-    // 항목 이미 표시된 항목 클릭시 다시 사라지게 함
-    let infoContent = document.getElementsByClassName('info-content');
-    for (var i = 0; i < 3; i++) {
-        infoContent[i].addEventListener("click", function () {
+
+    var placePanel = document.getElementById("place-panel");
+    var placeInfos = document.getElementsByClassName("place-info");
+    var placeTitles = document.getElementsByClassName('list-group-item');
+
+    var last_clicked;
+
+    for (let i = 0; i < placeInfos.length; i++) {
+        // 장소 제목들에 클릭 시 정보 표시되게 이벤트 추가
+        placeTitles[i].addEventListener("click", function () {
+            if (last_clicked != undefined) {
+                last_clicked.style.display = "none";
+                placePanel.style.display = "none";
+            }
+            var placeInfo = document.getElementById(this.id + "-info");
+            last_clicked = placeInfo;
+            placePanel.style.display = "block";
+            placeInfo.style.display = "block";
+        });
+
+        // 장소 정보를 클릭하면 사라지게 이벤트 추가
+        placeInfos[i].addEventListener("click", function () {
             this.style.display = "none";
-        })
+            placePanel.style.display = "none";
+        });
     }
 
-    // 항목 클릭 시 정보 표시
-    var items = document.getElementsByClassName("list-group-item");
-    // for(var i = 0; i < 3; i++) {
-    //     items[i].addEventListener("click", function () {
-    //         var infoPanel = document.getElementById("info-panel");
-    //         // var infoContent = document.getElementById("item${i}-info");
-    //         i++
-    //         var infoContent = document.getElementById("item"+(i)+"-info");
-    //         infoPanel.style.display = "block";
-    //         infoContent.style.display = "block";
-    //     });
-    // }
-    var last_click;
-    items[1].addEventListener("click", function () {
-        if (last_click != undefined) {
-            last_click.style.display = "none";
-        }
-        var infoPanel = document.getElementById("info-panel");
-        var infoContent = document.getElementById("item" + 1 + "-info");
-        last_click = infoContent;
-        infoPanel.style.display = "block";
-        infoContent.style.display = "block";
-    })
-    // items[2].addEventListener("click", function () {
-    //     if (last_click != undefined) {
-    //         last_click.style.display = "none";
-    //     }
-    //     var infoPanel = document.getElementById("info-panel");
-    //     var infoContent = document.getElementById("item" + 2 + "-info");
-    //     last_click = infoContent;
-    //     infoPanel.style.display = "block";
-    //     infoContent.style.display = "block";
-    // })
-    // items[3].addEventListener("click", function () {
-    //     if (last_click != undefined) {
-    //         last_click.style.display = "none";
-    //     }
-    //     var infoPanel = document.getElementById("info-panel");
-    //     var infoContent = document.getElementById("item" + 3 + "-info");
-    //     last_click = infoContent;
-    //     infoPanel.style.display = "block";
-    //     infoContent.style.display = "block";
-    // })
 </script>
 
 
