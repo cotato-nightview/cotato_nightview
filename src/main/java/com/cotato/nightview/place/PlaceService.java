@@ -124,7 +124,9 @@ public class PlaceService {
 
     public PlaceDto[] itemsToDto(JSONArray items) {
         ObjectMapper objectMapper = new ObjectMapper();
-        objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);   //선언한 필드만 매핑
+
+        //선언한 필드만 매핑
+        objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 
         String jsonSting;
         try {

@@ -20,6 +20,8 @@ public class JsonService {
         }
     }
 
+    // jsonString = json 객체를 문자열로 받은 값
+    // arrayName = 배열 이름
     public JSONArray parseJsonArray(String jsonString, String arrayName) {
         // JSON 파싱을 위한 parser 생성
         JSONParser parser = new JSONParser();

@@ -20,6 +20,7 @@ public class GuService {
             JSONObject areaObjJson = (JSONObject) areaObj;
             String guName = areaObjJson.get("gu").toString();
 
+            // 구 초기화 중복 방지
             if (guRepository.findByName(guName) == null) {
                 GuDto guDto = GuDto.builder()
                         .gu(guName)

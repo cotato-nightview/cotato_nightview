@@ -24,6 +24,7 @@ public class NaverApiService implements ApiService {
     private String xNaverClientSecret;
     private final JsonService jsonService;
 
+    // param을 검색어로 검색함
     public JSONArray getPlacesFromApi(String param) {
 
         // 초기 URI 생성
