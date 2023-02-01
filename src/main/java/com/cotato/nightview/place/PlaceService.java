@@ -14,6 +14,8 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class PlaceService {
@@ -57,10 +59,18 @@ public class PlaceService {
     }
 
     public String insertPlace(String name) {
+
         JSONArray placesFromApi = naverApiService.getPlacesFromApi(name);
 
         PlaceDto[] placeDtos = itemsToDto(placesFromApi);
-        PlaceDto dto = removeHtmlTags(placeDtos[0]);
+
+        PlaceDto dto = null;
+
+        try {
+            dto = removeHtmlTags(placeDtos[0]);
+        } catch (ArrayIndexOutOfBoundsException e) {
+            return "no search result";
+        }
 
         if(vaildPlace(dto)){
             setCoord(dto);
@@ -74,9 +84,9 @@ public class PlaceService {
     }
 
     private void setCoord(PlaceDto dto) {
-        Coord coord = coordService.transCoord(dto.getMapx(), dto.getMapy());
-        dto.setMapx(coord.getX());
-        dto.setMapy(coord.getY());
+        Coord coord = coordService.transCoord(dto.getLongitude(), dto.getLatitude());
+        dto.setLongitude(coord.getX());
+        dto.setLatitude(coord.getY());
     }
 
     private static PlaceDto removeHtmlTags(PlaceDto dto) {
@@ -114,7 +124,9 @@ public class PlaceService {
 
     public PlaceDto[] itemsToDto(JSONArray items) {
         ObjectMapper objectMapper = new ObjectMapper();
-        objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);   //선언한 필드만 매핑
+
+        //선언한 필드만 매핑
+        objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 
         String jsonSting;
         try {
@@ -130,4 +142,11 @@ public class PlaceService {
         }
     }
 
+    public Place findByTitle(String title){
+        return placeRepository.findByTitle(title);
+    }
+
+    public List<Place> findAll(){
+        return placeRepository.findAll();
+    }
 }

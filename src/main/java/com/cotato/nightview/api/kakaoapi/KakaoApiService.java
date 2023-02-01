@@ -2,10 +2,10 @@ package com.cotato.nightview.api.kakaoapi;
 
 import com.cotato.nightview.api.ApiService;
 import com.cotato.nightview.coord.Coord;
-import com.cotato.nightview.json.JsonService;
 import lombok.RequiredArgsConstructor;
-import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -16,11 +16,15 @@ import java.net.URI;
 
 @Service
 @RequiredArgsConstructor
+@PropertySource("classpath:config.properties")
 public class KakaoApiService implements ApiService {
+    @Value("${Kakao-Rest-Api-Key}")
+    private String kakaoRestApiKey;
 
-    private static Coord jsonToCoord(JSONObject coordJson) {
-        return new Coord((double) coordJson.get("x"), (double) coordJson.get("y"));
-    }
+//    private static Coord jsonToCoord(JSONObject coordJson) {
+//        return new Coord((double) coordJson.get("x"), (double) coordJson.get("y"));
+//    }
+
     @Override
     public URI buildUri(Object mapx, Object mapy) {
         return UriComponentsBuilder.fromUriString("http://dapi.kakao.com")
@@ -36,7 +40,7 @@ public class KakaoApiService implements ApiService {
     @Override
     public RequestEntity<Void> buildRequestEntity(URI uri) {
         return RequestEntity.get(uri)
-                .header("Authorization", "KakaoAK " + "029fe9d698f7b84b9bb093770125665f")
+                .header("Authorization", "KakaoAK " + kakaoRestApiKey)
                 .build();
     }
 
@@ -46,3 +50,17 @@ public class KakaoApiService implements ApiService {
         return restTemplate.exchange(requestEntity, String.class);
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+

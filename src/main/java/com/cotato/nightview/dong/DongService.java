@@ -1,15 +1,12 @@
 package com.cotato.nightview.dong;
 
 import com.cotato.nightview.gu.Gu;
-import com.cotato.nightview.gu.GuDto;
 import com.cotato.nightview.gu.GuService;
 import com.cotato.nightview.json.JsonService;
 import lombok.RequiredArgsConstructor;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor

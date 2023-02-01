@@ -1,17 +1,11 @@
 package com.cotato.nightview.api.naverapi;
 
 import com.cotato.nightview.api.ApiService;
-import com.cotato.nightview.coord.Coord;
 import com.cotato.nightview.json.JsonService;
-import com.cotato.nightview.api.kakaoapi.KakaoApiService;
-import com.cotato.nightview.place.PlaceDto;
-import com.cotato.nightview.place.PlaceService;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -22,9 +16,15 @@ import java.net.URI;
 
 @Service
 @RequiredArgsConstructor
+@PropertySource("classpath:config.properties")
 public class NaverApiService implements ApiService {
+    @Value("${X-Naver-Client-ID}")
+    private String xNaverClientId;
+    @Value("${X-Naver-Client-Secret}")
+    private String xNaverClientSecret;
     private final JsonService jsonService;
 
+    // param을 검색어로 검색함
     public JSONArray getPlacesFromApi(String param) {
 
         // 초기 URI 생성
@@ -62,8 +62,8 @@ public class NaverApiService implements ApiService {
     @Override
     public RequestEntity<Void> buildRequestEntity(URI uri) {
         return RequestEntity.get(uri)
-                .header("X-Naver-Client-ID", "rs3jbPtyp96zx_0CSktZ")
-                .header("X-Naver-Client-Secret", "QtBYuGAEHT")
+                .header("X-Naver-Client-ID", xNaverClientId)
+                .header("X-Naver-Client-Secret", xNaverClientSecret)
                 .build();
     }
 

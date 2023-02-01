@@ -3,8 +3,6 @@ package com.cotato.nightview.dong;
 import com.cotato.nightview.gu.Gu;
 import lombok.*;
 
-import java.lang.reflect.Member;
-
 @Getter
 @Setter
 @AllArgsConstructor
