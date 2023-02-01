@@ -31,6 +31,8 @@ public class GuService {
     }
 
     public Gu findByName(String name) {
+
         return guRepository.findByName(name);
+
     }
 }

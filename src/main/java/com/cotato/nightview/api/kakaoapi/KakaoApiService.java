@@ -50,3 +50,17 @@ public class KakaoApiService implements ApiService {
         return restTemplate.exchange(requestEntity, String.class);
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
