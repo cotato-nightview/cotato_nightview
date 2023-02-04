@@ -47,7 +47,7 @@
         }
 
         .coord-input {
-            display: none;
+            /*display: none;*/
         }
     </style>
 </head>
@@ -71,13 +71,16 @@
         <form id="coord-form" action="/place/find" method="post">
             <input step="any" class="coord-input" type="text" name="x" id="longitude">
             <input step="any" class="coord-input" type="text" name="y" id="latitude">
-            <button type="submit" class="btn btn-light" id="coord-submit">내 위치로 장소 찾기</button>
+            <!--            <button type="submit" class="btn btn-light" id="coord-submit">내 위치로 장소 찾기</button>-->
         </form>
+        <button type="button" class="btn btn-light" onclick="setUrl()">
+            내 위치로 장소 찾기
+        </button>
         <span style="color: white">또는</span>
         <form class="d-flex">
             <input class="form-control me-1" type="search" placeholder="직접 입력하기 ex) 상수동, 노원구" aria-label="Search">
             <input class="btn btn-primary" type="submit">
-                <i class="bi bi-search"></i>
+            <i class="bi bi-search"></i>
             </input>
         </form>
     </div>
@@ -87,28 +90,27 @@
         crossorigin="anonymous"></script>
 <script>
 
-   document.getElementById('coord-submit').addEventListener("click", function (event) {
-       event.preventDefault();
-       // 현재 위치 가져오기
-       navigator.geolocation.getCurrentPosition(getSuccess, getError);
-       document.getElementById('coord-form').submit();
-   })
+    function setUrl() {
+        navigator.geolocation.getCurrentPosition((position) => {
+            // 위도
+            let latitude = position.coords.latitude;
+            // 경도
+            let longitude = position.coords.longitude;
 
-   // 가져오기 성공
-    function getSuccess(position) {
-        // 위도
-        let latitude = position.coords.latitude;
-        // 경도
-        let longitude = position.coords.longitude;
+            // 현재 URL
+            let url = new URL(window.location.href);
 
-        document.getElementById('latitude').value = latitude;
-        document.getElementById('longitude').value = longitude;
+            // path, query parameter 추가
+            url.pathname = '/place/find';
+            url.searchParams.set('latitude', latitude);
+            url.searchParams.set('longitude', longitude);
+
+            location.href = url.href;
+        }, () => {
+            alert('Geolocation Error');
+        });
     }
 
-   // 가지오기 실패(거부)
-    function getError() {
-        alert('Geolocation Error');
-    }
 </script>
 </body>
 </html>

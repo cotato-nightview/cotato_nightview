@@ -1,22 +1,16 @@
 package com.cotato.nightview.place;
 
-import com.cotato.nightview.coord.Coord;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
-import org.modelmapper.TypeMap;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
-import javax.lang.model.SourceVersion;
 import java.util.List;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @Controller
 @RequiredArgsConstructor
@@ -45,10 +39,12 @@ public class PlaceViewController {
         return "map/map";
     }
 
-    @PostMapping("/find")
-    public String findPlaceByCoord(@ModelAttribute Coor coor) {
-        System.out.println("coord = " + coor.getX().getClass().getName());
+    @GetMapping("/find")
+    public String findPlaceByCoord(@RequestParam double longitude, @RequestParam double latitude) {
+        System.out.println("longitude = " + longitude);
+        System.out.println("latitude = " + latitude);
         return "redirect:/place/map";
     }
+
 }
 
