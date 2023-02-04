@@ -11,5 +11,4 @@ public interface ApiService {
 
     public ResponseEntity<String> callApi(RequestEntity<Void> requestEntity);
 
-    public URI buildUri(Object o1, Object o2);
 }

@@ -1,9 +1,7 @@
 package com.cotato.nightview.api.kakaoapi;
 
 import com.cotato.nightview.api.ApiService;
-import com.cotato.nightview.coord.Coord;
 import lombok.RequiredArgsConstructor;
-import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.http.RequestEntity;
@@ -21,12 +19,7 @@ public class KakaoApiService implements ApiService {
     @Value("${Kakao-Rest-Api-Key}")
     private String kakaoRestApiKey;
 
-//    private static Coord jsonToCoord(JSONObject coordJson) {
-//        return new Coord((double) coordJson.get("x"), (double) coordJson.get("y"));
-//    }
-
-    @Override
-    public URI buildUri(Object mapx, Object mapy) {
+    public URI buildTransCoordUri(double mapx, double mapy) {
         return UriComponentsBuilder.fromUriString("http://dapi.kakao.com")
                 .path("/v2/local/geo/transcoord.json")
                 .queryParam("x", mapx)
@@ -37,6 +30,21 @@ public class KakaoApiService implements ApiService {
                 .build()
                 .toUri();
     }
+
+    public URI buildCoordToAddressUri(double mapx, double mapy) {
+        return UriComponentsBuilder.fromUriString("http://dapi.kakao.com")
+                .path("/v2/local/geo/transcoord.json")
+                .queryParam("x", mapx)
+                .queryParam("y", mapy)
+                .queryParam("input_coord", "KTM")
+                .queryParam("output_coord", "WGS84")
+                .encode()
+                .build()
+                .toUri();
+    }
+
+
+
     @Override
     public RequestEntity<Void> buildRequestEntity(URI uri) {
         return RequestEntity.get(uri)
