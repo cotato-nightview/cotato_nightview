@@ -149,4 +149,7 @@ public class PlaceService {
     public List<Place> findAll(){
         return placeRepository.findAll();
     }
+    public List<Place> findAllByDongIn(List<Dong> dongList){
+        return placeRepository.findAllByDongIn(dongList);
+    }
 }

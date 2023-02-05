@@ -31,19 +31,16 @@ public class KakaoApiService implements ApiService {
                 .toUri();
     }
 
-    public URI buildCoordToAddressUri(double mapx, double mapy) {
+    public URI buildCoordToAddressUri(double longitude, double latitude) {
         return UriComponentsBuilder.fromUriString("http://dapi.kakao.com")
-                .path("/v2/local/geo/transcoord.json")
-                .queryParam("x", mapx)
-                .queryParam("y", mapy)
-                .queryParam("input_coord", "KTM")
-                .queryParam("output_coord", "WGS84")
+                .path("/v2/local/geo/coord2address.json")
+                .queryParam("x", longitude)
+                .queryParam("y", latitude)
+                .queryParam("input_coord", "WGS84")
                 .encode()
                 .build()
                 .toUri();
     }
-
-
 
     @Override
     public RequestEntity<Void> buildRequestEntity(URI uri) {

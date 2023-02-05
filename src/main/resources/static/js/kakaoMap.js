@@ -3,7 +3,7 @@ function showMap(defaultLatitude, defaultLongitude) {
     var container = document.getElementById('map');
     var options = {
         center: new kakao.maps.LatLng(defaultLatitude, defaultLongitude),
-        level: 3
+        level: 5
     };
     return new kakao.maps.Map(container, options);
 }

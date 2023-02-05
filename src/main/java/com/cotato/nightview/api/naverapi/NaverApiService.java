@@ -26,12 +26,8 @@ public class NaverApiService implements ApiService {
 
     // param을 검색어로 검색함
     public JSONArray getPlacesFromApi(String param) {
-
-        // 초기 URI 생성
-        String InitUri = "https://openapi.naver.com";
-
         // 지역 이름으로 uri 생성
-        URI uri = buildUri(InitUri, param);
+        URI uri = buildGetPlacesUri(param);
 
         // URI로 요청 엔티티 생성
         RequestEntity<Void> requestEntity = buildRequestEntity(uri);
@@ -43,13 +39,10 @@ public class NaverApiService implements ApiService {
         JSONArray items = jsonService.parseJsonArray(res.getBody(), "items");
 
         return items;
-
-
     }
 
-    @Override
-    public URI buildUri(Object InitUri, Object param) {
-        return UriComponentsBuilder.fromUriString((String) InitUri)
+    public URI buildGetPlacesUri(String param) {
+        return UriComponentsBuilder.fromUriString("https://openapi.naver.com")
                 .path("/v1/search/local.json")
                 .queryParam("query", param)
                 .queryParam("display", "5")
