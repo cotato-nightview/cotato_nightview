@@ -4,6 +4,7 @@ import com.cotato.nightview.coord.CoordService;
 import com.cotato.nightview.dong.Dong;
 import com.cotato.nightview.dong.DongService;
 import com.cotato.nightview.exception.ExceptionMessage;
+import com.cotato.nightview.exception.InvaildLocationException;
 import com.cotato.nightview.gu.Gu;
 import com.cotato.nightview.gu.GuService;
 import lombok.RequiredArgsConstructor;
@@ -15,11 +16,8 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Controller
 @RequiredArgsConstructor
@@ -68,10 +66,10 @@ public class PlaceViewController {
     }
 
     // 지원하지 않는 위치일 경우
-    @ExceptionHandler({IndexOutOfBoundsException.class})
-    public String invaildCoord(Model model) {
+    @ExceptionHandler({InvaildLocationException.class})
+    public String invaildLocation(Model model, InvaildLocationException e) {
         model.addAttribute("data",
-                new ExceptionMessage("지원하지 않는 위치입니다!", "/"));
+                new ExceptionMessage(e.getErrorMessage(), "/"));
         return "exception/message";
     }
 }

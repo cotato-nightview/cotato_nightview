@@ -5,6 +5,7 @@ import com.cotato.nightview.coord.Coord;
 import com.cotato.nightview.coord.CoordService;
 import com.cotato.nightview.dong.Dong;
 import com.cotato.nightview.dong.DongService;
+import com.cotato.nightview.exception.InvaildLocationException;
 import com.cotato.nightview.json.JsonService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
@@ -163,6 +164,15 @@ public class PlaceService {
     }
 
     public List<Place> findAllWtihInDistance(double longitude, double latitude, double distanceWithIn) {
+        if (!isVaildLocation(longitude, latitude)) {
+            throw new InvaildLocationException("지원하지 않는 위치입니다.");
+        }
         return placeRepository.findAllWtihInDistance(longitude, latitude, distanceWithIn);
+    }
+
+    private boolean isVaildLocation(double longitude, double latitude) {
+        if (latitude > 38.61 || latitude < 33.11) return false;
+        if (longitude > 131.87 || longitude < 124.6) return false;
+        return true;
     }
 }
