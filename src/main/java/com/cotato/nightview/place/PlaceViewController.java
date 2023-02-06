@@ -32,38 +32,33 @@ public class PlaceViewController {
     private final GuService guService;
     private final DongService dongService;
 
-    @GetMapping(path = "/map", params = "gu-name")
-    public String showMapByGuName(@RequestParam("gu-name") String guName, Model model) {
+    @GetMapping(path = "/map", params = "keyword")
+    public String showMapByGuName(@RequestParam("keyword") String keyword, Model model) {
         //gu id를 가져옴 -> gu id인 동을 가져옴
-        Gu gu = guService.findByName(guName);
+        Gu gu = guService.findByName(keyword);
         List<Dong> dongList = dongService.findAllByGu(gu);
 
-
-        // Entity List를 Dto List로 변경
+        // 해당 구에 있는 장소들을 가져옴
         List<Place> placeEntityList = placeService.findAllByDongIn(dongList);
-        List<PlaceDto> placeDtoList = placeEntityList
-                .stream()
-                .map(place -> modelMapper.map(place, PlaceDto.class))
-                .collect(Collectors.toList());
+        // javascript 변수로 사용하기 위해 연관 관계가 없는 dto 객체로 변경
+        List<PlaceDto> placeDtoList = placeService.entitiesToDtos(placeEntityList);
 
-        model.addAttribute("placeDtoList", placeDtoList);
 
         // 디폴트 좌표값 설정을 위한 장소
-        Place defaultPlace = placeService.findByTitle("경복궁");
+        PlaceDto defaultPlace = placeDtoList.get(0);
         model.addAttribute("defaultPlace", defaultPlace);
+
+        model.addAttribute("placeDtoList", placeDtoList);
         return "map/map";
     }
 
     @GetMapping(path = "/map", params = {"longitude", "latitude", "distance-within"})
     public String showMapByCoord(@RequestParam("longitude") double longitude, @RequestParam("latitude") double latitude,
                                  @RequestParam("distance-within") double distanceWithIn, Model model) {
+        // 일정 거리 안에 있는 장소를 가져옴
         List<Place> placeEntityList = placeService.findAllWtihInDistance(longitude, latitude, distanceWithIn);
-
         // javascript 변수로 사용하기 위해 연관 관계가 없는 dto 객체로 변경
-        List<PlaceDto> placeDtoList = placeEntityList
-                .stream()
-                .map(place -> modelMapper.map(place, PlaceDto.class))
-                .collect(Collectors.toList());
+        List<PlaceDto> placeDtoList = placeService.entitiesToDtos(placeEntityList);
 
         model.addAttribute("placeDtoList", placeDtoList);
 
@@ -71,7 +66,7 @@ public class PlaceViewController {
         model.addAttribute("defaultPlace", defaultPlace);
         return "map/map";
     }
-    
+
     // 지원하지 않는 위치일 경우
     @ExceptionHandler({IndexOutOfBoundsException.class})
     public String invaildCoord(Model model) {

@@ -8,7 +8,7 @@ function showMap(defaultLatitude, defaultLongitude) {
     return new kakao.maps.Map(container, options);
 }
 
-function makeMarkers(map, placeList) {
+function makeMarkersAndOverlay(map, placeList) {
     placeList.forEach(place => {
         makeMarkerAndOverlay(map, place);
     })
@@ -26,6 +26,7 @@ function makeMarkerAndOverlay(map, place) {
     var position = new kakao.maps.LatLng(place.latitude, place.longitude)
 
     var marker = makeMarker(map, place, position, markerImage);
+
     var overlay = makeOverlay(map, place, position);
     addOverlayListener(map, place, marker, overlay);
 }
@@ -52,13 +53,31 @@ function makeOverlay(map, place, position) {
     return new kakao.maps.CustomOverlay({
         content: content,
         map: map,
-        position: position
+        position: position,
     });
 }
 
 // 오버레이 리스너 추가 함수
 function addOverlayListener(map, place, marker, overlay) {
-    // 마커에 mouseover 이벤트와 mouseout 이벤트를 등록합니다
+    // mouseover 시에 오버레이 표시
+    addShowOverlayEvent(map, place, marker, overlay);
+
+    // mouseout 시에 오버레이 없어지게 리스터 추가
+    addHideOverlayEvent(map, place, marker, overlay);
+
+    // 클릭 시 상세정보 표시
+    addClickEvent(map, place, marker, overlay);
+
+}
+
+// 지도 중심 이동
+function setMapCenter(map, place) {
+    var moveLatLon = new kakao.maps.LatLng(place.latitude, place.longitude)
+    map.panTo(moveLatLon)
+}
+
+// mouseover 이벤트 등록
+function addShowOverlayEvent(map, place, marker, overlay) {
     kakao.maps.event.addListener(marker, 'mouseover', function () {
         // mouseover 시에 오버레이 나타나게 리스터 추가
         overlay.setMap(map);
@@ -67,12 +86,24 @@ function addOverlayListener(map, place, marker, overlay) {
         var top = parseInt(overlayElement.style.top, 10) - 60;
         overlayElement.style.top = top + 'px';
     });
+}
+
+// mouseout 이벤트 등록
+function addHideOverlayEvent(map, place, marker, overlay) {
     kakao.maps.event.addListener(marker, 'mouseout', function () {
-        // mouseout 시에 오버레이 없어지게 리스터 추가
         overlay.setMap(null);
     });
-
-    // 처음 로딩 시엔 안나타나게 설정
     overlay.setMap(null);
 }
 
+// click 이벤트 등록
+function addClickEvent(map, place, marker, overlay) {
+    kakao.maps.event.addListener(marker, 'click', function () {
+        // 전에 클릭해서 표시된 항목을 숨김
+        hideLastClicked()
+        let place = parsePlaceObject(overlay.getContent(), placeList);
+        var placeInfo = document.getElementById('place' + place.id + '-info');
+        showClickedPlace(placeInfo);
+        setMapCenter(map, place);
+    })
+}

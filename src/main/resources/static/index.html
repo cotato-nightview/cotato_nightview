@@ -78,9 +78,9 @@
         </button>
         <span style="color: white">또는</span>
         <div class="d-flex">
-            <input class="form-control me-1" id="areaName" type="search" placeholder="직접 입력하기 ex) 상수동, 노원구"
+            <input class="form-control me-1" id="keyword" type="search" placeholder="직접 입력하기 ex) 상수동, 노원구"
                    aria-label="Search">
-            <button class="btn btn-primary" type="button" onclick="areaNameToUrl()">
+            <button class="btn btn-primary" type="button" onclick="keywordToUrl()">
                 <i class="bi bi-search"></i>
             </button>
         </div>
@@ -90,11 +90,11 @@
         integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4"
         crossorigin="anonymous"></script>
 <script>
-    function areaNameToUrl() {
-        var areaName = document.getElementById('areaName').value;
+    function keywordToUrl() {
+        var keyword = document.getElementById('keyword').value;
         let url = new URL(window.location.href);
         url.pathname = '/place/map';
-        url.searchParams.set('gu-name', areaName);
+        url.searchParams.set('keyword', keyword);
         location.href = url.href;
     }
 
