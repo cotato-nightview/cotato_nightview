@@ -109,10 +109,10 @@
             let url = new URL(window.location.href);
 
             // path, query parameter 추가
-            url.pathname = '/place/find';
+            url.pathname = '/place/map';
             url.searchParams.set('latitude', latitude);
             url.searchParams.set('longitude', longitude);
-
+            url.searchParams.set('distance-within', 5);
             location.href = url.href;
         }, () => {
             alert('Geolocation Error');

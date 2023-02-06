@@ -32,8 +32,8 @@ public class PlaceViewController {
     private final GuService guService;
     private final DongService dongService;
 
-    @GetMapping("/map")
-    public String map(@RequestParam("gu-name") String guName, Model model) {
+    @GetMapping(path = "/map", params = "gu-name")
+    public String showMapByGuName(@RequestParam("gu-name") String guName, Model model) {
         //gu id를 가져옴 -> gu id인 동을 가져옴
         Gu gu = guService.findByName(guName);
         List<Dong> dongList = dongService.findAllByGu(gu);
@@ -54,16 +54,24 @@ public class PlaceViewController {
         return "map/map";
     }
 
-    @GetMapping("/find")
-    public String transCoordToGu(@RequestParam double longitude, @RequestParam double latitude,
-                                 RedirectAttributes redirectAttributes) {
-        System.out.println("longitude = " + longitude);
-        System.out.println("latitude = " + latitude);
-        String guName = coordService.coordToGu(longitude, latitude);
-        redirectAttributes.addAttribute("gu-name", guName);
-        return "redirect:/place/map";
-    }
+    @GetMapping(path = "/map", params = {"longitude", "latitude", "distance-within"})
+    public String showMapByCoord(@RequestParam("longitude") double longitude, @RequestParam("latitude") double latitude,
+                                 @RequestParam("distance-within") double distanceWithIn, Model model) {
+        List<Place> placeEntityList = placeService.findAllWtihInDistance(longitude, latitude, distanceWithIn);
 
+        // javascript 변수로 사용하기 위해 연관 관계가 없는 dto 객체로 변경
+        List<PlaceDto> placeDtoList = placeEntityList
+                .stream()
+                .map(place -> modelMapper.map(place, PlaceDto.class))
+                .collect(Collectors.toList());
+
+        model.addAttribute("placeDtoList", placeDtoList);
+
+        PlaceDto defaultPlace = placeDtoList.get(0);
+        model.addAttribute("defaultPlace", defaultPlace);
+        return "map/map";
+    }
+    
     // 지원하지 않는 위치일 경우
     @ExceptionHandler({IndexOutOfBoundsException.class})
     public String invaildCoord(Model model) {

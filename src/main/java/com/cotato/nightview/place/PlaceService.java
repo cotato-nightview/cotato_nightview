@@ -72,7 +72,7 @@ public class PlaceService {
             return "no search result";
         }
 
-        if(vaildPlace(dto)){
+        if (vaildPlace(dto)) {
             setCoord(dto);
             Dong dong = dongService.getDongFromAddress(dto.getAddress());
             savePlace(dto, dong);
@@ -142,14 +142,19 @@ public class PlaceService {
         }
     }
 
-    public Place findByTitle(String title){
+    public Place findByTitle(String title) {
         return placeRepository.findByTitle(title);
     }
 
-    public List<Place> findAll(){
+    public List<Place> findAll() {
         return placeRepository.findAll();
     }
-    public List<Place> findAllByDongIn(List<Dong> dongList){
+
+    public List<Place> findAllByDongIn(List<Dong> dongList) {
         return placeRepository.findAllByDongIn(dongList);
+    }
+
+    public List<Place> findAllWtihInDistance(double longitude, double latitude, double distanceWithIn) {
+        return placeRepository.findAllWtihInDistance(longitude, latitude, distanceWithIn);
     }
 }
