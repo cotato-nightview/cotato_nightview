@@ -25,8 +25,6 @@ import java.util.List;
 @PropertySource("classpath:config.properties")
 public class PlaceViewController {
     private final PlaceService placeService;
-    private final ModelMapper modelMapper;
-    private final CoordService coordService;
     private final GuService guService;
     private final DongService dongService;
 
