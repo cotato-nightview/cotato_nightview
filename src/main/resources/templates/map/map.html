@@ -11,6 +11,7 @@
 
     <script type="text/javascript" id="kakao"
             src="//dapi.kakao.com/v2/maps/sdk.js?appkey=731d04e17a6d5ee692829911c5c77521"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
     <style>
         #map {
             width: 100vw;
@@ -43,6 +44,10 @@
             overflow-y: auto;
         }
 
+        .list-group-item {
+            border:
+        }
+
         #place-panel {
             width: 380px;
             display: none;
@@ -55,6 +60,7 @@
             height: 100vh;
             z-index: 2;
             background-color: white;
+            opacity: 0.8;
         }
     </style>
 </head>
@@ -84,22 +90,31 @@
                         </button>
                     </div>
                 </div>
+                <select class="form-select" id="distanceSelectBox" aria-label="Default select example">
+                    <option selected value="5">5Km</option>
+                    <option value="10">10Km</option>
+                    <option value="15">15Km</option>
+                </select>
+                <span>이내 위치한 장소</span>
                 <!--                db에서 가져온 요소를 반복해서 출력-->
-                <a href="#" class="list-group-item list-group-item-action py-3 lh-sm" th:id="'place'+${place.id}" th:each="place : ${placeDtoList}">
-                    <div class="d-flex w-100 align-items-center justify-content-between">
-                        <strong class="mb-1" th:text="${place.title}"></strong>
-                        <small class="text-muted"></small>
-                    </div>
-                    <div class="col-10 mb-1 small" th:text="${place.address}"></div>
-                </a>
+                <th:block th:each="place : ${placeDtoList}">
+                    <a href="#" class="list-group-item list-group-item-action py-3 lh-sm" th:id="'place'+${place.id}">
+                        <div class="d-flex w-100 align-items-center justify-content-between">
+                            <strong class="mb-1" th:text="${place.title}"></strong>
+                            <small class="text-muted"></small>
+                        </div>
+                        <div class="col-10 mb-1 small" th:text="${place.address}"></div>
+                    </a>
+                </th:block>
 
             </div>
         </div>
 
         <!--목록 클릭시 표시되는 정보들-->
         <div id="place-panel">
-            <div th:id="'place'+${place.id}+'-info'" class="place-info" th:each="place : ${placeDtoList}" >
-                <a th:text="${place.title}" th:href="@{'https://map.kakao.com/link/to/'+${place.title} + ',' + ${place.latitude} + ',' + ${place.longitude}}" ></a>
+            <div th:id="'place'+${place.id}+'-info'" class="place-info" th:each="place : ${placeDtoList}">
+                <a th:text="${place.title}"
+                   th:href="@{'https://map.kakao.com/link/to/'+${place.title} + ',' + ${place.latitude} + ',' + ${place.longitude}}"></a>
             </div>
 
         </div>
@@ -109,6 +124,8 @@
 
 
 <script th:src="@{/js/kakaoMap.js}"></script>
+<script th:src="@{/js/util.js}"></script>
+<script th:src="@{/js/event.js}"></script>
 <script th:inline="javascript">
     var placeList = [[${placeDtoList}]];
     var defaultLongitude = [[${defaultPlace.longitude}]];
@@ -116,36 +133,24 @@
 
     var map = showMap(defaultLatitude, defaultLongitude);
 
-    // 마커 생성
-    makeMarkers(map, placeList);
-
-
     var placePanel = document.getElementById("place-panel");
     var placeInfos = document.getElementsByClassName("place-info");
     var placeTitles = document.getElementsByClassName('list-group-item');
 
     var last_clicked;
 
-    for (let i = 0; i < placeInfos.length; i++) {
-        // 장소 제목들에 클릭 시 정보 표시되게 이벤트 추가
-        placeTitles[i].addEventListener("click", function () {
-            if (last_clicked != undefined) {
-                last_clicked.style.display = "none";
-                placePanel.style.display = "none";
-            }
-            var placeInfo = document.getElementById(this.id + "-info");
-            last_clicked = placeInfo;
-            placePanel.style.display = "block";
-            placeInfo.style.display = "block";
-        });
+    // 마커 생성
+    makeMarkersAndOverlay(map, placeList);
 
-        // 장소 정보를 클릭하면 사라지게 이벤트 추가
-        placeInfos[i].addEventListener("click", function () {
-            this.style.display = "none";
-            placePanel.style.display = "none";
-        });
-    }
+    // 장소 제목들을 클릭 시 정보 표시되게 이벤트 추가
+    addShowInfoEvent();
+    // 장소 정보를 클릭하면 사라지게 이벤트 추가
+    addHideInfoEvent();
 
+    $('#distanceSelectBox').change(function () {
+          let val = $(this).val();
+          console.log(val);
+    })
 </script>
 
 
