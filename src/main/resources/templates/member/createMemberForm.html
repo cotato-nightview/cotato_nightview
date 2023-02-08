@@ -10,20 +10,24 @@
     <link rel="canonical" href="https://getbootstrap.com/docs/5.1/examples/sign-in/">
 
 
-
+<!-- name 과 id 가 같아야함-->
 </head>
 <body class="text-center">
 <th:block fragment="content">
-    <h2>로그인</h2>
+    <h2>회원가입</h2>
     <div>
-        <form>
+        <form action="/signup" method="post">
             <div>
-                <div>아이디</div>
-                <input id="id" type="text" name="id"/>
+                <div>이메일(아이디)</div>
+                <input id="email" type="text" name="email"/>
             </div>
             <div>
                 <div>비밀번호</div>
                 <input id="password" type="password" name="password"/>
+            </div>
+            <div>
+                <div>닉네임</div>
+                <input id="membername" type="text" name="membername"/>
             </div>
             <input class="btn-submit" type="submit" value="로그인">
         </form>

@@ -35,6 +35,7 @@ public class Member implements UserDetails {
     @Column
     private String password;
 
+
     //여기 아래부터 UserDetails 관련
     @ElementCollection(fetch = FetchType.EAGER)
     @Builder.Default
