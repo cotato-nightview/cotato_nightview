@@ -20,9 +20,10 @@
             width: 100vw;
             background: no-repeat center;
             background-image: linear-gradient(
-                    rgba(217, 217, 217, 0.4),
-                    rgba(217, 217, 217, 0.4)
-            ), url("background-img.png");
+                    rgba(217, 217, 217, 0.5),
+                    rgba(217, 217, 217, 0.5)
+            ),
+            url("https://images.pexels.com/photos/15375822/pexels-photo-15375822.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2");
         );
             background-size: cover;
             overflow-x: hidden;
@@ -30,17 +31,7 @@
             background-attachment: fixed;
         }
 
-        /*#signup, #logout {*/
-        /*    position: absolute;*/
-        /*    right: 20px;*/
-        /*    top: 20px;*/
-        /*}*/
-        #logout {
-            position: absolute;
-            right: 180px;
-            top: 20px;
-        }
-        #signup{
+        #signup, #logout {
             position: absolute;
             right: 20px;
             top: 20px;
@@ -52,37 +43,38 @@
             top: 20px;
         }
 
-        .me-1{
+        .me-1 {
             width: 500px;
         }
 
-        .coord-input {
-            /*display: none;*/
+        #username {
+            position: absolute;
+            right: 200px;
+            top: 20px;
         }
+
     </style>
 </head>
 <body>
 <div class="background">
-    <p th:text="${#authentication.name}"></p>
-    <!--    sec 을 활용하여 로그인을 한 유저에게는 로그아웃 버튼만 보여주고 안한 유저에게는 로그인, 회원가입 버튼을 보여줌-->
-    <!--    onclick="location.href='/member/memberLoginForm'" 이런식으로 넣으면 해당 url로 이동-->
-    <button sec:authorize="isAnonymous()" type="button" id="login" class="btn btn-primary"
-            onclick="location.href='/login'">Login
-    </button>
-    <button sec:authorize="isAnonymous()" type="button" id="signup" class="btn btn-primary"
-            onclick="location.href='/signup'">Sign up
-    </button>
-    <button sec:authorize="isAuthenticated()" type="button" id="logout" class="btn btn-primary"
-            onclick="">Logout
-    </button>
+    <header>
+        <div sec:authentication="name" id="username"></div>
+        <!--    sec 을 활용하여 로그인을 한 유저에게는 로그아웃 버튼만 보여주고 안한 유저에게는 로그인, 회원가입 버튼을 보여줌-->
+        <!--    onclick="location.href='/member/memberLoginForm'" 이런식으로 넣으면 해당 url로 이동-->
+        <button sec:authorize="isAnonymous()" type="button" id="login" class="btn btn-primary"
+                onclick="location.href='/login'">Login
+        </button>
+        <button sec:authorize="isAnonymous()" type="button" id="signup" class="btn btn-primary"
+                onclick="location.href='/signup'">Sign up
+        </button>
+        <button sec:authorize="isAuthenticated()" type="button" id="logout" class="btn btn-primary"
+                onclick="location.href='/logout'">Logout
+        </button>
+
+    </header>
 
 
     <div class="d-flex align-items-center justify-content-center vh-100 flex-column gap-4">
-        <!--        <form id="coord-form" action="/place/find" method="post">-->
-        <!--            <input step="any" class="coord-input" type="text" name="x" id="longitude">-->
-        <!--            <input step="any" class="coord-input" type="text" name="y" id="latitude">-->
-        <!--            &lt;!&ndash;            <button type="submit" class="btn btn-light" id="coord-submit">내 위치로 장소 찾기</button>&ndash;&gt;-->
-        <!--        </form>-->
         <button type="button" class="btn btn-light" onclick="coordToUrl()">
             내 위치로 장소 찾기
         </button>

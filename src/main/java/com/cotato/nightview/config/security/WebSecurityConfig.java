@@ -21,9 +21,9 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 
 @Configuration
-@AllArgsConstructor
-@EnableGlobalMethodSecurity(securedEnabled = true, prePostEnabled = true)
 @EnableWebSecurity      //웹 보안 활성화, 스프링 시큐리티가 WebSecurityConfigurer를 구현하거나 컨텍스트의 WebSebSecurityConfigurerAdapter를 확장한 빈으로 설정되어 있어야 한다.
+@EnableGlobalMethodSecurity(securedEnabled = true, prePostEnabled = true)
+@AllArgsConstructor
 public class WebSecurityConfig {
 
 
@@ -49,16 +49,15 @@ public class WebSecurityConfig {
     //위 방식 문제점 있음 -> 이제 WebSecurityConfigurerAdapter 지원안함
     @Bean
     protected SecurityFilterChain configure(HttpSecurity http) throws Exception {
-        http.csrf().disable();
+//        http.csrf().disable();
         http.authorizeRequests()
                 .antMatchers("/admin/**").hasRole("ADMIN")
                 .antMatchers("/user/**").hasRole("USER")
-                .anyRequest().permitAll() // 그외 나머지 요청은 누구나 접근 가능
+                .antMatchers("/**").permitAll() // 그외 나머지 요청은 누구나 접근 가능
                 .and()
                 .formLogin()
                 .loginPage("/login")
                 .usernameParameter("email")
-                .passwordParameter("password")
                 .loginProcessingUrl("/loginProcess")
                 .defaultSuccessUrl("/")
                 .permitAll()
@@ -68,8 +67,8 @@ public class WebSecurityConfig {
                 .logoutSuccessUrl("/")
                 .invalidateHttpSession(true);
 
-        // JwtAuthenticationFilter를 UsernamePasswordAuthenticationFilter 전에 넣는다
-
         return http.build();
     }
 }
+
+

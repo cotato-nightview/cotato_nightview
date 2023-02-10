@@ -27,7 +27,7 @@ public class Member implements UserDetails {
     private Long member_id;
 
     @Column
-    private String membername;
+    private String username;
 
     @Column
     private String email;
@@ -50,7 +50,12 @@ public class Member implements UserDetails {
 
     @Override
     public String getUsername() {
-        return email;
+        return this.username;
+    }
+
+    @Override
+    public String getPassword() {
+        return this.password;
     }
 
     @Override
@@ -72,4 +77,5 @@ public class Member implements UserDetails {
     public boolean isEnabled() {
         return true;
     }
+
 }

@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -38,7 +39,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 //    }
 
     @Transactional
-    public void saveUser(UserDto userDto){
+    public void saveUser(UserDto userDto) {
         BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
         String encodedPassword = passwordEncoder.encode(userDto.getPassword());
         userDto.setPassword(encodedPassword);
@@ -47,20 +48,14 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        Optional<Member> findEmail = memberRepository.findByEmail(email);
-        Member member = findEmail.get();
-
+        Member member = memberRepository.findByEmail(email).get();
         List<GrantedAuthority> authorities = new ArrayList<>();
         if (("admin").equals(email)) {
             authorities.add(new SimpleGrantedAuthority(Role.ADMIN.getValue()));
         } else {
             authorities.add(new SimpleGrantedAuthority(Role.USER.getValue()));
         }
-
-        return new User(member.getEmail(), member.getPassword(), authorities);
+        return new User(member.getUsername(), member.getPassword(), authorities);
     }
-
-
-
 
 }

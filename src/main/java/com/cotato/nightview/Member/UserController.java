@@ -24,12 +24,14 @@ public class UserController {
     @PostMapping("/signup")
     public String signup(@ModelAttribute UserDto userDto){
         userService.saveUser(userDto);
-
+        System.out.println("userDto.toString() = " + userDto.toString());
         return "redirect:/";
     }
 
     @GetMapping("/login")
     public String loginForm(){
+
+
         return "member/loginMemberForm";
     }
 
