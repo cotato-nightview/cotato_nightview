@@ -1,4 +1,4 @@
-package com.cotato.nightview.Member;
+package com.cotato.nightview.member;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -27,13 +27,14 @@ public class Member implements UserDetails {
     private Long member_id;
 
     @Column
-    private String membername;
+    private String username;
 
     @Column
     private String email;
 
     @Column
     private String password;
+
 
     //여기 아래부터 UserDetails 관련
     @ElementCollection(fetch = FetchType.EAGER)
@@ -49,7 +50,12 @@ public class Member implements UserDetails {
 
     @Override
     public String getUsername() {
-        return email;
+        return this.username;
+    }
+
+    @Override
+    public String getPassword() {
+        return this.password;
     }
 
     @Override
@@ -71,4 +77,5 @@ public class Member implements UserDetails {
     public boolean isEnabled() {
         return true;
     }
+
 }
