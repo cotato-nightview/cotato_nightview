@@ -10,4 +10,5 @@ import java.util.List;
 public interface DongRepository extends JpaRepository<Dong, Long> {
     public Dong findByName(String name);
     public List<Dong> findAllByGu(Gu gu);
+    public boolean existsByName(String name);
 }

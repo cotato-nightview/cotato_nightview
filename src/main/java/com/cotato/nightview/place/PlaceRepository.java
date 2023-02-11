@@ -16,6 +16,8 @@ public interface PlaceRepository extends JpaRepository<Place, Long> {
 
     public List<Place> findAll();
 
+    public boolean existsByTitle(String title);
+
     String HAVERSINE_FORMULA = "(6371 * acos(cos(radians(:latitude)) * cos(radians(s.latitude)) *" +
             " cos(radians(s.longitude) - radians(:longitude)) + sin(radians(:latitude)) * sin(radians(s.latitude))))";
 
