@@ -1,4 +1,4 @@
-package com.cotato.nightview.Member;
+package com.cotato.nightview.member;
 
 
 import lombok.AllArgsConstructor;
@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class UserDto {      //requestdto -> 요청으로부터 정보를 받아 DB에 저장할 떄
+public class MemberDto {      //requestdto -> 요청으로부터 정보를 받아 DB에 저장할 떄
     private String username;
     private String email;;
     private String password;

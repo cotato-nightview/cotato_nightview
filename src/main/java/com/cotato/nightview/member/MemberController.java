@@ -1,20 +1,15 @@
-package com.cotato.nightview.Member;
+package com.cotato.nightview.member;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 @RequiredArgsConstructor
 @Controller
-public class UserController {
+public class MemberController {
 
     private final MemberRepository memberRepository;
-    private final UserServiceImpl userService;
+    private final MemberServiceImpl userService;
 
     @GetMapping("/signup")
     public String signupForm(){
@@ -22,9 +17,9 @@ public class UserController {
     }
 
     @PostMapping("/signup")
-    public String signup(@ModelAttribute UserDto userDto){
-        userService.saveUser(userDto);
-        System.out.println("userDto.toString() = " + userDto.toString());
+    public String signup(@ModelAttribute MemberDto memberDto){
+        userService.saveUser(memberDto);
+        System.out.println("userDto.toString() = " + memberDto.toString());
         return "redirect:/";
     }
 

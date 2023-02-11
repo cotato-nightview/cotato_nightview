@@ -1,11 +1,10 @@
-package com.cotato.nightview.Member;
+package com.cotato.nightview.member;
 
 
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -17,12 +16,11 @@ import org.springframework.stereotype.Service;
 import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @RequiredArgsConstructor
 @Transactional
 @Service
-public class UserServiceImpl implements UserService, UserDetailsService {
+public class MemberServiceImpl implements MemberService, UserDetailsService {
 
     //ctrl + alt +l로 자동정렬
     //@autowired 쓰는 대신 @RequiredArgsConstructor + final 쓰는것이 더 용이
@@ -39,11 +37,11 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 //    }
 
     @Transactional
-    public void saveUser(UserDto userDto) {
+    public void saveUser(MemberDto memberDto) {
         BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-        String encodedPassword = passwordEncoder.encode(userDto.getPassword());
-        userDto.setPassword(encodedPassword);
-        memberRepository.save(userDto.toEntity());
+        String encodedPassword = passwordEncoder.encode(memberDto.getPassword());
+        memberDto.setPassword(encodedPassword);
+        memberRepository.save(memberDto.toEntity());
     }
 
     @Override

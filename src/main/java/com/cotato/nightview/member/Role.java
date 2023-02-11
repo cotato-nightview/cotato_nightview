@@ -1,4 +1,4 @@
-package com.cotato.nightview.Member;
+package com.cotato.nightview.member;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
