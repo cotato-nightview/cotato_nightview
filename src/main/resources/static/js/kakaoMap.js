@@ -8,31 +8,39 @@ function showMap(defaultLatitude, defaultLongitude) {
     return new kakao.maps.Map(container, options);
 }
 
-function makeMarkersAndOverlay(map, placeList) {
+function makeMarkersAndOverlaies(map, placeList) {
     placeList.forEach(place => {
         makeMarkerAndOverlay(map, place);
     })
 }
 
 function makeMarkerAndOverlay(map, place) {
-    var imageSrc = "https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/markerStar.png";
-
-    // 마커 이미지의 이미지 크기 입니다
-    var imageSize = new kakao.maps.Size(24, 35);
-
-    // 마커 이미지를 생성합니다
-    var markerImage = new kakao.maps.MarkerImage(imageSrc, imageSize);
+    // var imageSrc = "https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/markerStar.png";
+    //
+    // // 마커 이미지의 이미지 크기 입니다
+    // var imageSize = new kakao.maps.Size(24, 35);
+    //
+    // // 마커 이미지를 생성합니다
+    // var markerImage = new kakao.maps.MarkerImage(imageSrc, imageSize);
 
     var position = new kakao.maps.LatLng(place.latitude, place.longitude)
 
-    var marker = makeMarker(map, place, position, markerImage);
+    var marker = makeMarker(map, position, "");
 
     var overlay = makeOverlay(map, place, position);
     addOverlayListener(map, place, marker, overlay);
 }
+function makeUserLocationMaker() {
+    var imageSrc = "https://images.emojiterra.com/twitter/v14.0/512px/1f535.png";
+    var imageSize = new kakao.maps.Size(100, 100);
+
+    var markerImage = new kakao.maps.MarkerImage(imageSrc, imageSize);
+    var position = new kakao.maps.LatLng(searchParams.get('latitude'), searchParams.get('longitude'))
+    makeMarker(map, position, markerImage).setOpacity(0.5);
+}
 
 // 마커 생성 함수
-function makeMarker(map, place, position, markerImage) {
+function makeMarker(map, position, markerImage) {
     return new kakao.maps.Marker({
         // 마커를 표시할 지도
         map: map,
