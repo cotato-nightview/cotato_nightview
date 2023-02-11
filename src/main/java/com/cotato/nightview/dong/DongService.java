@@ -27,18 +27,15 @@ public class DongService {
             JSONObject areaObjJson = (JSONObject) areaObj;
             String dongName = areaObjJson.get("dong").toString();
             String guName = areaObjJson.get("gu").toString();
-
-            if (dongRepository.existsByName(dongName) && (dongName != "신사동")) {
+            Gu gu = guService.findByName(guName);
+            if (dongRepository.existsByNameAndGu(dongName, gu)) {
                 System.out.println(dongName + "은 이미 DB에 존재하는 동입니다!");
                 continue;
-//                throw new InvaildLocationException("이미 DB에 존재하는 동입니다!");
             }
-            Gu gu = guService.findByName(guName);
 
             DongDto dto = DongDto.builder()
                     .name(dongName)
                     .build();
-
             dongRepository.save(dto.toEntity(gu));
 
         }

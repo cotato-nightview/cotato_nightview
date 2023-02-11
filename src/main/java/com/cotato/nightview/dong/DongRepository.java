@@ -9,6 +9,8 @@ import java.util.List;
 @Repository
 public interface DongRepository extends JpaRepository<Dong, Long> {
     public Dong findByName(String name);
+
     public List<Dong> findAllByGu(Gu gu);
-    public boolean existsByName(String name);
+
+    public boolean existsByNameAndGu(String name, Gu gu);
 }
