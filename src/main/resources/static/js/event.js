@@ -33,3 +33,13 @@ function showClickedPlace(placeInfo) {
     placePanel.style.display = "block";
     placeInfo.style.display = "block";
 }
+
+function addDistanceChangeEvent() {
+    document.getElementById('distanceSelectBox').addEventListener('change', function () {
+        let selectedValue = this.value;
+        let currentUrl = window.location.href;
+        let url = new URL(currentUrl);
+        url.searchParams.set("distance-within", selectedValue);
+        window.location.href = url.toString();
+    });
+}

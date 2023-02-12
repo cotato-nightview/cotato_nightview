@@ -91,7 +91,7 @@
                     </div>
                 </div>
                 <select class="form-select" id="distanceSelectBox" aria-label="Default select example">
-                    <option selected value="5">5Km</option>
+                    <option value="5">5Km</option>
                     <option value="10">10Km</option>
                     <option value="15">15Km</option>
                 </select>
@@ -127,30 +127,37 @@
 <script th:src="@{/js/util.js}"></script>
 <script th:src="@{/js/event.js}"></script>
 <script th:inline="javascript">
+    let searchParams = new URLSearchParams(window.location.search);
+
     var placeList = [[${placeDtoList}]];
-    var defaultLongitude = [[${defaultPlace.longitude}]];
-    var defaultLatitude = [[${defaultPlace.latitude}]];
+    var map = showMap(searchParams.get('latitude'), searchParams.get('longitude'));
 
-    var map = showMap(defaultLatitude, defaultLongitude);
+    var placePanel = document.getElementById("place-panel")
+    var placeInfos = document.getElementsByClassName('place-info');
+    var placeTitles = document.getElementsByClassName('list-group-item')
 
-    var placePanel = document.getElementById("place-panel");
-    var placeInfos = document.getElementsByClassName("place-info");
-    var placeTitles = document.getElementsByClassName('list-group-item');
+    makeUserLocationMaker();
 
     var last_clicked;
 
     // 마커 생성
-    makeMarkersAndOverlay(map, placeList);
-
+    makeMarkersAndOverlaies(map, placeList);
     // 장소 제목들을 클릭 시 정보 표시되게 이벤트 추가
     addShowInfoEvent();
     // 장소 정보를 클릭하면 사라지게 이벤트 추가
     addHideInfoEvent();
 
-    $('#distanceSelectBox').change(function () {
-          let val = $(this).val();
-          console.log(val);
-    })
+    addDistanceChangeEvent();
+
+    var select = document.getElementById("distanceSelectBox");
+    var urlParams = new URLSearchParams(window.location.search);
+    var distance = urlParams.get("distance-within");
+    for (var i = 0; i < select.options.length; i++) {
+        if (select.options[i].value == distance) {
+            select.selectedIndex = i;
+            break;
+        }
+    }
 </script>
 
 

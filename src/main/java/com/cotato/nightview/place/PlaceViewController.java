@@ -1,6 +1,5 @@
 package com.cotato.nightview.place;
 
-import com.cotato.nightview.coord.CoordService;
 import com.cotato.nightview.dong.Dong;
 import com.cotato.nightview.dong.DongService;
 import com.cotato.nightview.exception.ExceptionMessage;
@@ -8,7 +7,6 @@ import com.cotato.nightview.exception.InvaildLocationException;
 import com.cotato.nightview.gu.Gu;
 import com.cotato.nightview.gu.GuService;
 import lombok.RequiredArgsConstructor;
-import org.modelmapper.ModelMapper;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -26,6 +24,7 @@ import java.util.List;
 public class PlaceViewController {
     private final PlaceService placeService;
     private final GuService guService;
+    private final PlaceUtil placeUtil;
     private final DongService dongService;
 
     @GetMapping(path = "/map", params = "keyword")
@@ -37,7 +36,7 @@ public class PlaceViewController {
         // 해당 구에 있는 장소들을 가져옴
         List<Place> placeEntityList = placeService.findAllByDongIn(dongList);
         // javascript 변수로 사용하기 위해 연관 관계가 없는 dto 객체로 변경
-        List<PlaceDto> placeDtoList = placeService.entitiesToDtos(placeEntityList);
+        List<PlaceDto> placeDtoList = placeUtil.entitiesToDtos(placeEntityList);
 
 
         // 디폴트 좌표값 설정을 위한 장소
@@ -54,7 +53,7 @@ public class PlaceViewController {
         // 일정 거리 안에 있는 장소를 가져옴
         List<Place> placeEntityList = placeService.findAllWtihInDistance(longitude, latitude, distanceWithIn);
         // javascript 변수로 사용하기 위해 연관 관계가 없는 dto 객체로 변경
-        List<PlaceDto> placeDtoList = placeService.entitiesToDtos(placeEntityList);
+        List<PlaceDto> placeDtoList = placeUtil.entitiesToDtos(placeEntityList);
 
         model.addAttribute("placeDtoList", placeDtoList);
 

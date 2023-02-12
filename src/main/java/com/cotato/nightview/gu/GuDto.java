@@ -1,6 +1,5 @@
 package com.cotato.nightview.gu;
 
-import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 import lombok.*;
 
 @Getter
@@ -9,16 +8,16 @@ import lombok.*;
 @NoArgsConstructor
 public class GuDto {
     private Long id;
-    private String gu;
+    private String name;
 
     @Builder
-    public GuDto(String gu) {
-        this.gu = gu;
+    public GuDto(String name) {
+        this.name = name;
     }
 
     public Gu toEntity() {
         return Gu.builder()
-                .name(gu)
+                .name(name)
                 .build();
     }
 }
