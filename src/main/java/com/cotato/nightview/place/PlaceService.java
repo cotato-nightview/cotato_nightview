@@ -3,7 +3,7 @@ package com.cotato.nightview.place;
 import com.cotato.nightview.api.NaverExteranlApi;
 import com.cotato.nightview.dong.Dong;
 import com.cotato.nightview.dong.DongService;
-import com.cotato.nightview.exception.InvaildLocationException;
+import com.cotato.nightview.exception.InvalidLocationException;
 import lombok.RequiredArgsConstructor;
 import org.json.simple.JSONArray;
 import org.springframework.stereotype.Service;
@@ -67,7 +67,7 @@ public class PlaceService {
     }
 
 
-    public boolean isVaildPlace(PlaceDto dto) {
+    public boolean isValidPlace(PlaceDto dto) {
         // 카테고리가 적절한지 검사
         if (!(dto.getCategory().contains("명소") || dto.getCategory().contains("지명"))) return false;
 
@@ -82,7 +82,7 @@ public class PlaceService {
 
     @Transactional
     public void savePlace(PlaceDto dto) {
-        if (isVaildPlace(dto)) {
+        if (isValidPlace(dto)) {
             placeUtil.transCoord(dto);
             Dong dong = dongService.findByAddress(dto.getAddress());
             placeRepository.save(dto.toEntity(dong));
@@ -94,8 +94,8 @@ public class PlaceService {
     }
 
     public List<Place> findAllWtihInDistance(double longitude, double latitude, double distanceWithIn) {
-        if (!placeUtil.isVaildLocation(longitude, latitude)) {
-            throw new InvaildLocationException("지원하지 않는 위치입니다.");
+        if (!placeUtil.isValidLocation(longitude, latitude)) {
+            throw new InvalidLocationException("지원하지 않는 위치입니다.");
         }
         return placeRepository.findAllWtihInDistance(longitude, latitude, distanceWithIn);
     }

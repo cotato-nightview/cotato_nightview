@@ -3,7 +3,7 @@ package com.cotato.nightview.place;
 import com.cotato.nightview.dong.Dong;
 import com.cotato.nightview.dong.DongService;
 import com.cotato.nightview.exception.ExceptionMessage;
-import com.cotato.nightview.exception.InvaildLocationException;
+import com.cotato.nightview.exception.InvalidLocationException;
 import com.cotato.nightview.gu.Gu;
 import com.cotato.nightview.gu.GuService;
 import lombok.RequiredArgsConstructor;
@@ -63,8 +63,8 @@ public class PlaceViewController {
     }
 
     // 지원하지 않는 위치일 경우
-    @ExceptionHandler({InvaildLocationException.class})
-    public String invaildLocation(Model model, InvaildLocationException e) {
+    @ExceptionHandler({InvalidLocationException.class})
+    public String invalidLocation(Model model, InvalidLocationException e) {
         model.addAttribute("data",
                 new ExceptionMessage(e.getErrorMessage(), "/"));
         return "exception/message";

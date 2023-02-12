@@ -1,6 +1,5 @@
 package com.cotato.nightview.dong;
 
-import com.cotato.nightview.exception.InvaildLocationException;
 import com.cotato.nightview.gu.Gu;
 import com.cotato.nightview.gu.GuService;
 import com.cotato.nightview.json.JsonUtil;

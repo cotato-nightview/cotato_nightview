@@ -3,10 +3,10 @@ package com.cotato.nightview.exception;
 import lombok.Getter;
 
 @Getter
-public class InvaildLocationException extends RuntimeException {
+public class InvalidLocationException extends RuntimeException {
     private String errorMessage;
 
-    public InvaildLocationException(String errorMessage){
+    public InvalidLocationException(String errorMessage){
         this.errorMessage = errorMessage;
     }
 }

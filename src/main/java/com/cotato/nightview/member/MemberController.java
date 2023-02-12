@@ -2,32 +2,42 @@ package com.cotato.nightview.member;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
+import java.util.Map;
 
 @RequiredArgsConstructor
 @Controller
 public class MemberController {
 
-    private final MemberRepository memberRepository;
     private final MemberServiceImpl userService;
 
     @GetMapping("/signup")
-    public String signupForm(){
-        return "member/createMemberForm";
+    public String signupForm() {
+        System.out.println("dfsfasfsdfasfsafd");
+        return "/member/createMemberForm";
     }
 
     @PostMapping("/signup")
-    public String signup(@ModelAttribute MemberDto memberDto){
-        userService.saveUser(memberDto);
-        System.out.println("userDto.toString() = " + memberDto.toString());
+    public String signup(@Valid @ModelAttribute MemberDto memberDto, Errors errors, Model model) {
+        if (errors.hasErrors()) {
+            model.addAttribute("memberDto", memberDto);
+            Map<String, String> validatorResult = userService.validateHandling(errors);
+            for (String key : validatorResult.keySet()) {
+                model.addAttribute(key, validatorResult.get(key));
+            }
+            return "/member/createMemberForm";
+        }
+        userService.saveMember(memberDto);
         return "redirect:/";
     }
 
     @GetMapping("/login")
-    public String loginForm(){
-
-
-        return "member/loginMemberForm";
+    public String loginForm() {
+        return "/member/loginMemberForm";
     }
 
 
