@@ -8,7 +8,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.validation.Errors;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -71,7 +70,7 @@ public class PlaceViewController {
     }
 
     @ExceptionHandler({ConstraintViolationException.class})
-    public String invalidGuNme(ConstraintViolationException e, RedirectAttributes redirectAttributes) {
+    public String invalidGuName(ConstraintViolationException e, RedirectAttributes redirectAttributes) {
         List<String> errorMessages = e.getConstraintViolations()
                 .stream()
                 .map(ConstraintViolation::getMessage)
