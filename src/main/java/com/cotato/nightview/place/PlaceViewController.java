@@ -37,11 +37,6 @@ public class PlaceViewController {
         // javascript 변수로 사용하기 위해 연관 관계가 없는 dto 객체로 변경
         List<PlaceDto> placeDtoList = placeUtil.entitiesToDtos(placeEntityList);
 
-
-        // 디폴트 좌표값 설정을 위한 장소
-        PlaceDto defaultPlace = placeDtoList.get(0);
-        model.addAttribute("defaultPlace", defaultPlace);
-
         model.addAttribute("placeDtoList", placeDtoList);
         return "map/map";
     }
@@ -56,8 +51,6 @@ public class PlaceViewController {
 
         model.addAttribute("placeDtoList", placeDtoList);
 
-        PlaceDto defaultPlace = placeDtoList.get(0);
-        model.addAttribute("defaultPlace", defaultPlace);
         return "map/map";
     }
 
