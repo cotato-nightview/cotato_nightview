@@ -45,6 +45,7 @@ public class PlaceViewController {
         // javascript 변수로 사용하기 위해 연관 관계가 없는 dto 객체로 변경
         List<PlaceDto> placeDtoList = placeUtil.entitiesToDtos(placeEntityList);
 
+        model.addAttribute("defaultPlace", placeDtoList.get(0));
         model.addAttribute("placeDtoList", placeDtoList);
         return "map/map";
     }

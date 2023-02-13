@@ -131,11 +131,16 @@
     if (message) {
         alert(message);
     }
+    var defaultPlace = [[${defaultPlace}]];
 
     let searchParams = new URLSearchParams(window.location.search);
 
     var placeList = [[${placeDtoList}]];
-    var map = showMap(searchParams.get('latitude'), searchParams.get('longitude'));
+    if (defaultPlace) {
+        var map = showMap(defaultPlace.latitude, defaultPlace.longitude);
+    } else {
+        var map = showMap(searchParams.get('latitude'), searchParams.get('longitude'));
+    }
 
     var placePanel = document.getElementById("place-panel")
     var placeInfos = document.getElementsByClassName('place-info');
