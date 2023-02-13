@@ -1,10 +1,13 @@
 package com.cotato.nightview.config.security;
 
+import com.cotato.nightview.member.MemberServiceImpl;
+import com.cotato.nightview.member.UserDetailsServiceImpl;
 import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -16,18 +19,31 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 
 @Configuration
-@EnableWebSecurity      //웹 보안 활성화, 스프링 시큐리티가 WebSecurityConfigurer를 구현하거나 컨텍스트의 WebSebSecurityConfigurerAdapter를 확장한 빈으로 설정되어 있어야 한다.
+@EnableWebSecurity
+//웹 보안 활성화, 스프링 시큐리티가 WebSecurityConfigurer를 구현하거나 컨텍스트의 WebSebSecurityConfigurerAdapter를 확장한 빈으로 설정되어 있어야 한다.
 @EnableGlobalMethodSecurity(securedEnabled = true, prePostEnabled = true)
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class WebSecurityConfig {
+    private final UserDetailsServiceImpl userDetailsService;
+    @Bean
+    public AuthenticationFailureHandler authenticationFailureHandler() {
+        return new CustomAuthFailureHandler();
+    }
 
-
-
+    @Bean
+    public DaoAuthenticationProvider daoAuthenticationProvider() {
+        DaoAuthenticationProvider authenticationProvider = new DaoAuthenticationProvider();
+        authenticationProvider.setUserDetailsService(userDetailsService);
+        authenticationProvider.setPasswordEncoder(passwordEncoder());
+        authenticationProvider.setHideUserNotFoundExceptions(false);
+        return authenticationProvider;
+    }
     // 암호화에 필요한 PasswordEncoder 를 Bean 등록
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -49,7 +65,6 @@ public class WebSecurityConfig {
     //위 방식 문제점 있음 -> 이제 WebSecurityConfigurerAdapter 지원안함
     @Bean
     protected SecurityFilterChain configure(HttpSecurity http) throws Exception {
-//        http.csrf().disable();
         http.authorizeRequests()
                 .antMatchers("/admin/**").hasRole("ADMIN")
                 .antMatchers("/user/**").hasRole("USER")
@@ -59,13 +74,13 @@ public class WebSecurityConfig {
                 .loginPage("/login")
                 .usernameParameter("email")
                 .loginProcessingUrl("/loginProcess")
+                .failureHandler(authenticationFailureHandler())
                 .defaultSuccessUrl("/")
                 .permitAll()
                 .and()
                 .logout()
                 .logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
-                .logoutSuccessUrl("/")
-                .invalidateHttpSession(true);
+                .logoutSuccessUrl("/");
 
         return http.build();
     }

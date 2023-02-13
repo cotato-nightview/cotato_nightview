@@ -25,7 +25,7 @@ import java.util.Map;
 @RequiredArgsConstructor
 @Transactional
 @Service
-public class MemberServiceImpl implements MemberService, UserDetailsService {
+public class MemberServiceImpl implements MemberService {
 
     //ctrl + alt +l로 자동정렬
     //@autowired 쓰는 대신 @RequiredArgsConstructor + final 쓰는것이 더 용이
@@ -49,23 +49,8 @@ public class MemberServiceImpl implements MemberService, UserDetailsService {
         memberRepository.save(memberDto.toEntity());
     }
 
-    @Override
-    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        Member member = memberRepository.findByEmail(email).get();
-        List<GrantedAuthority> authorities = new ArrayList<>();
-        if (("admin").equals(email)) {
-            authorities.add(new SimpleGrantedAuthority(Role.ADMIN.getValue()));
-        } else {
-            authorities.add(new SimpleGrantedAuthority(Role.USER.getValue()));
-        }
-        return new User(member.getUsername(), member.getPassword(), authorities);
-    }
 
-    private void validateDuplicateMember(MemberDto memberDto){
-        if(memberRepository.existsByEmail(memberDto.getEmail())){
-            throw new IllegalArgumentException("이미 가입된 이메일입니다.");
-        }
-    }
+
     public Map<String, String> validateHandling(Errors errors) {
         Map<String, String> validatorResult = new HashMap<>();
 
@@ -75,5 +60,11 @@ public class MemberServiceImpl implements MemberService, UserDetailsService {
         }
 
         return validatorResult;
+    }
+
+    private void validateDuplicateMember(MemberDto memberDto) {
+        if (memberRepository.existsByEmail(memberDto.getEmail())) {
+            throw new IllegalArgumentException("이미 가입된 이메일입니다.");
+        }
     }
 }
