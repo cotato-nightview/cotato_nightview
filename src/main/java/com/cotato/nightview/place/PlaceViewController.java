@@ -2,8 +2,6 @@ package com.cotato.nightview.place;
 
 import com.cotato.nightview.dong.Dong;
 import com.cotato.nightview.dong.DongService;
-import com.cotato.nightview.exception.ExceptionMessage;
-import com.cotato.nightview.exception.InvalidLocationException;
 import com.cotato.nightview.gu.Gu;
 import com.cotato.nightview.gu.GuService;
 import lombok.RequiredArgsConstructor;
@@ -14,6 +12,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
 
@@ -49,9 +48,9 @@ public class PlaceViewController {
 
     @GetMapping(path = "/map", params = {"longitude", "latitude", "distance-within"})
     public String showMapByCoord(@RequestParam("longitude") double longitude, @RequestParam("latitude") double latitude,
-                                 @RequestParam("distance-within") double distanceWithIn, Model model) {
+                                 @RequestParam("distance-within") double distanceWithin, Model model) {
         // 일정 거리 안에 있는 장소를 가져옴
-        List<Place> placeEntityList = placeService.findAllWtihInDistance(longitude, latitude, distanceWithIn);
+        List<Place> placeEntityList = placeService.findAllWtihInDistance(longitude, latitude, distanceWithin);
         // javascript 변수로 사용하기 위해 연관 관계가 없는 dto 객체로 변경
         List<PlaceDto> placeDtoList = placeUtil.entitiesToDtos(placeEntityList);
 
@@ -63,11 +62,10 @@ public class PlaceViewController {
     }
 
     // 지원하지 않는 위치일 경우
-    @ExceptionHandler({InvalidLocationException.class})
-    public String invalidLocation(Model model, InvalidLocationException e) {
-        model.addAttribute("data",
-                new ExceptionMessage(e.getErrorMessage(), "/"));
-        return "exception/message";
+    @ExceptionHandler({IllegalArgumentException.class})
+    public String invalidLocation(IllegalArgumentException e, RedirectAttributes redirectAttributes) {
+        redirectAttributes.addFlashAttribute("message",e.getMessage());
+        return "redirect:/";
     }
 }
 

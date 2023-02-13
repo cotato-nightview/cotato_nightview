@@ -55,9 +55,5 @@ public class PlaceUtil {
         dto.setLatitude(coord.getY());
     }
 
-    public boolean isValidLocation(double longitude, double latitude) {
-        if (latitude > 38.61 || latitude < 33.11) return false;
-        if (longitude > 131.87 || longitude < 124.6) return false;
-        return true;
-    }
+
 }

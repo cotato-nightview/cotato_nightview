@@ -61,7 +61,7 @@ public class MemberServiceImpl implements MemberService, UserDetailsService {
         return new User(member.getUsername(), member.getPassword(), authorities);
     }
 
-    public void validateDuplicateMember(MemberDto memberDto){
+    private void validateDuplicateMember(MemberDto memberDto){
         if(memberRepository.existsByEmail(memberDto.getEmail())){
             throw new IllegalArgumentException("이미 가입된 이메일입니다.");
         }

@@ -44,7 +44,6 @@ public class MemberController {
 
     @ExceptionHandler({IllegalArgumentException.class})
     public String duplicateMember(IllegalArgumentException e, RedirectAttributes redirectAttributes) {
-        System.out.println("중복 유저 발생");
         redirectAttributes.addFlashAttribute("message",e.getMessage());
         return "redirect:/signup";
     }

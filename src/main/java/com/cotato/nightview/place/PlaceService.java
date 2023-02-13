@@ -42,7 +42,7 @@ public class PlaceService {
         List<Dong> dongList = dongService.findAll();
         int i = 0;
 
-        for(Dong dong : dongList){
+        for (Dong dong : dongList) {
             try {
                 Thread.sleep(60);
             } catch (InterruptedException e) {
@@ -67,7 +67,7 @@ public class PlaceService {
     }
 
 
-    public boolean isValidPlace(PlaceDto dto) {
+    private boolean isValidPlace(PlaceDto dto) {
         // 카테고리가 적절한지 검사
         if (!(dto.getCategory().contains("명소") || dto.getCategory().contains("지명"))) return false;
 
@@ -94,11 +94,17 @@ public class PlaceService {
     }
 
     public List<Place> findAllWtihInDistance(double longitude, double latitude, double distanceWithIn) {
-        if (!placeUtil.isValidLocation(longitude, latitude)) {
-            throw new InvalidLocationException("지원하지 않는 위치입니다.");
-        }
+        validateLocation(longitude, latitude);
         return placeRepository.findAllWtihInDistance(longitude, latitude, distanceWithIn);
     }
 
+    private void validateLocation(double longitude, double latitude) {
+        if (latitude < 38.61 && latitude > 33.11)
+            if (longitude < 131.87 && longitude > 124.6) {
+                return;
+            }
+
+        throw new IllegalArgumentException("지원하지 않는 위치입니다.");
+    }
 
 }
