@@ -1,7 +1,5 @@
 package com.cotato.nightview.member;
 
-import com.cotato.nightview.exception.ExceptionMessage;
-import com.cotato.nightview.exception.InvalidLocationException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;

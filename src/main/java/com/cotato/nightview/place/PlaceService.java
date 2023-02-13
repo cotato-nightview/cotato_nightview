@@ -3,7 +3,6 @@ package com.cotato.nightview.place;
 import com.cotato.nightview.api.NaverExteranlApi;
 import com.cotato.nightview.dong.Dong;
 import com.cotato.nightview.dong.DongService;
-import com.cotato.nightview.exception.InvalidLocationException;
 import lombok.RequiredArgsConstructor;
 import org.json.simple.JSONArray;
 import org.springframework.stereotype.Service;
