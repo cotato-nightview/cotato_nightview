@@ -44,6 +44,7 @@ public class MemberServiceImpl implements MemberService, UserDetailsService {
 
     @Transactional
     public void saveMember(MemberDto memberDto) {
+        validateDuplicateMember(memberDto);
         memberDto.setPassword(passwordEncoder.encode(memberDto.getPassword()));
         memberRepository.save(memberDto.toEntity());
     }
@@ -60,6 +61,11 @@ public class MemberServiceImpl implements MemberService, UserDetailsService {
         return new User(member.getUsername(), member.getPassword(), authorities);
     }
 
+    public void validateDuplicateMember(MemberDto memberDto){
+        if(memberRepository.existsByEmail(memberDto.getEmail())){
+            throw new IllegalArgumentException("이미 가입된 이메일입니다.");
+        }
+    }
     public Map<String, String> validateHandling(Errors errors) {
         Map<String, String> validatorResult = new HashMap<>();
 

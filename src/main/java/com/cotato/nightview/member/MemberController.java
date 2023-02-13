@@ -1,10 +1,13 @@
 package com.cotato.nightview.member;
 
+import com.cotato.nightview.exception.ExceptionMessage;
+import com.cotato.nightview.exception.InvalidLocationException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.validation.Valid;
 import java.util.Map;
@@ -13,11 +16,10 @@ import java.util.Map;
 @Controller
 public class MemberController {
 
-    private final MemberServiceImpl userService;
+    private final MemberServiceImpl memberService;
 
     @GetMapping("/signup")
     public String signupForm() {
-        System.out.println("dfsfasfsdfasfsafd");
         return "/member/createMemberForm";
     }
 
@@ -25,13 +27,13 @@ public class MemberController {
     public String signup(@Valid @ModelAttribute MemberDto memberDto, Errors errors, Model model) {
         if (errors.hasErrors()) {
             model.addAttribute("memberDto", memberDto);
-            Map<String, String> validatorResult = userService.validateHandling(errors);
+            Map<String, String> validatorResult = memberService.validateHandling(errors);
             for (String key : validatorResult.keySet()) {
                 model.addAttribute(key, validatorResult.get(key));
             }
             return "/member/createMemberForm";
         }
-        userService.saveMember(memberDto);
+        memberService.saveMember(memberDto);
         return "redirect:/";
     }
 
@@ -40,6 +42,12 @@ public class MemberController {
         return "/member/loginMemberForm";
     }
 
+    @ExceptionHandler({IllegalArgumentException.class})
+    public String duplicateMember(IllegalArgumentException e, RedirectAttributes redirectAttributes) {
+        System.out.println("중복 유저 발생");
+        redirectAttributes.addFlashAttribute("message",e.getMessage());
+        return "redirect:/signup";
+    }
 
     //스프링 시큐리티 사용시 미필요
 //    @PostMapping("/login")
