@@ -8,18 +8,26 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.Errors;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import javax.persistence.EntityNotFoundException;
+import javax.validation.ConstraintViolation;
+import javax.validation.ConstraintViolationException;
+import javax.validation.constraints.Pattern;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Controller
 @RequiredArgsConstructor
 @RequestMapping("/place")
 @PropertySource("classpath:config.properties")
+@Validated
 public class PlaceViewController {
     private final PlaceService placeService;
     private final GuService guService;
@@ -27,7 +35,7 @@ public class PlaceViewController {
     private final DongService dongService;
 
     @GetMapping(path = "/map", params = "keyword")
-    public String showMapByGuName(@RequestParam("keyword") String keyword, Model model) {
+    public String showMapByGuName(@RequestParam("keyword") @Pattern(regexp = "^[가-힣]*구$", message = "'구'로 끝나야합니다.") String keyword, Model model) {
         //gu id를 가져옴 -> gu id인 동을 가져옴
         Gu gu = guService.findByName(keyword);
         List<Dong> dongList = dongService.findAllByGu(gu);
@@ -54,10 +62,21 @@ public class PlaceViewController {
         return "map/map";
     }
 
-    // 지원하지 않는 위치일 경우
-    @ExceptionHandler({IllegalArgumentException.class})
-    public String invalidLocation(IllegalArgumentException e, RedirectAttributes redirectAttributes) {
-        redirectAttributes.addFlashAttribute("message",e.getMessage());
+    // 지원하지 않는 위치일 경우, 구 이름이 유효성 검사를 통과했으나 없는 구인 경우
+    @ExceptionHandler({IllegalArgumentException.class, EntityNotFoundException.class})
+    public String invalidLocation(Exception e, RedirectAttributes redirectAttributes) {
+        redirectAttributes.addFlashAttribute("message", e.getMessage());
+        return "redirect:/";
+    }
+
+    @ExceptionHandler({ConstraintViolationException.class})
+    public String invalidGuNme(ConstraintViolationException e, RedirectAttributes redirectAttributes) {
+        List<String> errorMessages = e.getConstraintViolations()
+                .stream()
+                .map(ConstraintViolation::getMessage)
+                .collect(Collectors.toList());
+
+        redirectAttributes.addFlashAttribute("valid_message", errorMessages.get(0));
         return "redirect:/";
     }
 }

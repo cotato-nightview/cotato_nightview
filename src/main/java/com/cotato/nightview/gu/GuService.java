@@ -6,12 +6,17 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.EntityNotFoundException;
+import javax.transaction.Transactional;
+import java.util.Optional;
+
 @Service
 @RequiredArgsConstructor
 public class GuService {
     private final JsonUtil jsonUtil;
     private final GuRepository guRepository;
 
+    @Transactional
     public void initGu() {
         String areaInfoJson = jsonUtil.readFileAsString("dong_coords.json");
         JSONArray areaInfoArray = jsonUtil.parseJsonArray(areaInfoJson, "areaInfo");
@@ -34,9 +39,7 @@ public class GuService {
     }
 
     public Gu findByName(String guName) {
-        if (!guRepository.existsByName(guName)) {
-            throw new RuntimeException("없는 지역 이름입니다!");
-        }
-        return guRepository.findByName(guName);
+        return guRepository.findByName(guName)
+                .orElseThrow(()->new EntityNotFoundException("없는 지역이름입니다!"));
     }
 }
