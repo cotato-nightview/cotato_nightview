@@ -1,5 +1,6 @@
 package com.cotato.nightview.gu;
 
+import com.cotato.nightview.exception.InvaildLocationException;
 import com.cotato.nightview.json.JsonService;
 import lombok.RequiredArgsConstructor;
 import org.json.simple.JSONArray;
@@ -31,8 +32,7 @@ public class GuService {
     }
 
     public Gu findByName(String name) {
-
-        return guRepository.findByName(name);
-
+        return guRepository.findByName(name).orElseThrow(()
+                -> new InvaildLocationException("없는 지역 이름입니다!"));
     }
 }
