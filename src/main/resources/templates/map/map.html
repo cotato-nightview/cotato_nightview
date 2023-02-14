@@ -45,7 +45,7 @@
         }
 
         .list-group-item {
-            border:
+            /*border:*/
         }
 
         #place-panel {
@@ -61,6 +61,45 @@
             z-index: 2;
             background-color: white;
             opacity: 0.8;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .btn btn-secondary btn-sm {
+            opacity: 1;
+        }
+
+        .form-group {
+            width: 100%;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+        }
+
+        #commentLabel {
+            align-self: start;
+            text-align: start;
+            width: 20%;
+            margin-left: 10%;
+        }
+
+        #commentSubmitButton {
+            width: 20%;
+            align-self: end;
+        }
+
+        #commentForm {
+            width: 80%;
+            display: flex;
+            flex-direction: column;
+            align-self: center;
+        }
+
+        #closeButton {
+            z-index: 2;
+            height: 50px;
+            width: 50px;
+            display: none;
         }
     </style>
 </head>
@@ -115,9 +154,18 @@
             <div th:id="'place'+${place.id}+'-info'" class="place-info" th:each="place : ${placeDtoList}">
                 <a th:text="${place.title}"
                    th:href="@{'https://map.kakao.com/link/to/'+${place.title} + ',' + ${place.latitude} + ',' + ${place.longitude}}"></a>
+                <div class="form-group">
+                    <label for="exampleFormControlTextarea1" id="commentLabel">댓글</label>
+                    <form id="commentForm" action="" method="post">
+                        <textarea class="form-control" id="exampleFormControlTextarea1" rows="3"></textarea>
+                        <button type="submit" id="commentSubmitButton" class="btn btn-secondary btn-sm">작성</button>
+                    </form>
+                </div>
             </div>
 
         </div>
+        <button id="closeButton" type="button" class="btn btn-secondary"><i class="bi bi-x-lg"></i></button>
+
     </div>
 
 </div>
@@ -148,7 +196,8 @@
 
     makeUserLocationMaker();
 
-    var last_clicked;
+    var lastClicked;
+    var shownPlaceInfo;
 
     // 마커 생성
     makeMarkersAndOverlaies(map, placeList);

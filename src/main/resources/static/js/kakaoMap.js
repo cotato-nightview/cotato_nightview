@@ -111,7 +111,11 @@ function addClickEvent(map, place, marker, overlay) {
         hideLastClicked()
         let place = parsePlaceObject(overlay.getContent(), placeList);
         var placeInfo = document.getElementById('place' + place.id + '-info');
+        shownPlaceInfo = placeInfo;
         showClickedPlace(placeInfo);
         setMapCenter(map, place);
+
+        let closeButton = document.getElementById('closeButton');
+        closeButton.style.display = "block";
     })
 }
