@@ -42,6 +42,12 @@ dependencies {
 
 	implementation group: 'org.modelmapper', name: 'modelmapper', version: '2.3.8'
 
+	// 유효성 검사
+	implementation 'org.springframework.boot:spring-boot-starter-validation'
+
+
+	implementation group: 'org.modelmapper', name: 'modelmapper', version: '2.3.8'
+
 }
 
 tasks.named('test') {
