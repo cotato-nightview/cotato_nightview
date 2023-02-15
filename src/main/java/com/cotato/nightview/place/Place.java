@@ -11,8 +11,7 @@ import javax.persistence.*;
 
 @Entity
 @Table(name = "place")
-@Getter
-@Setter
+@Getter @Setter
 @NoArgsConstructor
 public class Place {
     @Id
@@ -41,16 +40,4 @@ public class Place {
         this.dong = dong;
     }
 
-    @Override
-    public String toString() {
-        return "Place{" +
-                "id=" + id +
-                ", title='" + title + '\'' +
-                ", address='" + address + '\'' +
-                ", roadAddress='" + roadAddress + '\'' +
-                ", longitude=" + longitude +
-                ", latitude=" + latitude +
-                ", dong=" + dong +
-                '}';
-    }
 }

@@ -16,10 +16,12 @@ public interface PlaceRepository extends JpaRepository<Place, Long> {
 
     public List<Place> findAll();
 
+    public boolean existsByTitle(String title);
+
     String HAVERSINE_FORMULA = "(6371 * acos(cos(radians(:latitude)) * cos(radians(s.latitude)) *" +
             " cos(radians(s.longitude) - radians(:longitude)) + sin(radians(:latitude)) * sin(radians(s.latitude))))";
 
-    @Query("SELECT s FROM Place s WHERE " + HAVERSINE_FORMULA + " < :distance ORDER BY " + HAVERSINE_FORMULA + " DESC")
+    @Query("SELECT s FROM Place s WHERE " + HAVERSINE_FORMULA + " < :distance ORDER BY " + HAVERSINE_FORMULA + " ASC ")
     List<Place> findAllWtihInDistance(@Param("longitude") double longitude,
                                       @Param("latitude") double latitude,
                                       @Param("distance")
