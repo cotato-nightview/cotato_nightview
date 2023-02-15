@@ -22,11 +22,10 @@ public class GuService {
         for (Object areaObj : areaInfoArray) {
             JSONObject areaObjJson = (JSONObject) areaObj;
             String guName = areaObjJson.get("gu").toString();
-
+            System.out.println(guName);
             // 구 초기화 중복 방지
             if (guRepository.existsByName(guName)) {
-                System.out.println(guName +"은 이미 DB에 존재하는 지역입니다!");
-                throw new RuntimeException("이미 DB에 존재하는 지역입니다!");
+                continue;
             }
 
             GuDto guDto = GuDto.builder()

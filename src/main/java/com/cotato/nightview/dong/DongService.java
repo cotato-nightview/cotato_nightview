@@ -18,7 +18,7 @@ public class DongService {
     private final DongRepository dongRepository;
 
     public void initDong() {
-        String areaInfoJson = jsonUtil.readFileAsString("dong_coords.json");
+        String areaInfoJson = jsonUtil.readFileAsString("json/dong_coords.json");
         JSONArray areaInfoArray = jsonUtil.parseJsonArray(areaInfoJson, "areaInfo");
 
         for (Object areaObj : areaInfoArray) {
