@@ -45,7 +45,7 @@
         }
 
         .list-group-item {
-            border:
+            /*border:*/
         }
 
         #place-panel {
@@ -61,6 +61,45 @@
             z-index: 2;
             background-color: white;
             opacity: 0.8;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .btn btn-secondary btn-sm {
+            opacity: 1;
+        }
+
+        .form-group {
+            width: 100%;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+        }
+
+        #commentLabel {
+            align-self: start;
+            text-align: start;
+            width: 20%;
+            margin-left: 10%;
+        }
+
+        #commentSubmitButton {
+            width: 20%;
+            align-self: end;
+        }
+
+        #commentForm {
+            width: 80%;
+            display: flex;
+            flex-direction: column;
+            align-self: center;
+        }
+
+        #closeButton {
+            z-index: 2;
+            height: 50px;
+            width: 50px;
+            display: none;
         }
     </style>
 </head>
@@ -115,9 +154,18 @@
             <div th:id="'place'+${place.id}+'-info'" class="place-info" th:each="place : ${placeDtoList}">
                 <a th:text="${place.title}"
                    th:href="@{'https://map.kakao.com/link/to/'+${place.title} + ',' + ${place.latitude} + ',' + ${place.longitude}}"></a>
+                <div class="form-group">
+                    <label for="exampleFormControlTextarea1" id="commentLabel">댓글</label>
+                    <form id="commentForm" action="" method="post">
+                        <textarea class="form-control" id="exampleFormControlTextarea1" rows="3"></textarea>
+                        <button type="submit" id="commentSubmitButton" class="btn btn-secondary btn-sm">작성</button>
+                    </form>
+                </div>
             </div>
 
         </div>
+        <button id="closeButton" type="button" class="btn btn-secondary"><i class="bi bi-x-lg"></i></button>
+
     </div>
 
 </div>
@@ -127,10 +175,20 @@
 <script th:src="@{/js/util.js}"></script>
 <script th:src="@{/js/event.js}"></script>
 <script th:inline="javascript">
+    let message = [[${message}]];
+    if (message) {
+        alert(message);
+    }
+    var defaultPlace = [[${defaultPlace}]];
+
     let searchParams = new URLSearchParams(window.location.search);
 
     var placeList = [[${placeDtoList}]];
-    var map = showMap(searchParams.get('latitude'), searchParams.get('longitude'));
+    if (defaultPlace) {
+        var map = showMap(defaultPlace.latitude, defaultPlace.longitude);
+    } else {
+        var map = showMap(searchParams.get('latitude'), searchParams.get('longitude'));
+    }
 
     var placePanel = document.getElementById("place-panel")
     var placeInfos = document.getElementsByClassName('place-info');
@@ -138,7 +196,8 @@
 
     makeUserLocationMaker();
 
-    var last_clicked;
+    var lastClicked;
+    var shownPlaceInfo;
 
     // 마커 생성
     makeMarkersAndOverlaies(map, placeList);
@@ -159,7 +218,6 @@
         }
     }
 </script>
-
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4"

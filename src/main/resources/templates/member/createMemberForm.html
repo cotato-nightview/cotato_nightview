@@ -1,5 +1,5 @@
 <!doctype html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="ko" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -16,6 +16,13 @@
             margin: 0;
         }
 
+        .signup-input {
+            display: flex;
+            flex-direction: column;
+        }
+        .valid-message {
+            color: red;
+        }
         .background {
             height: 100vh;
             width: 100vw;
@@ -36,26 +43,33 @@
                 <div class="col-12 col-md-8 col-lg-6 col-xl-5">
                     <div class="card shadow-2-strong" style="border-radius: 1rem;">
                         <div class="card-body p-5 text-center">
-                            <form action="/signup" method="post">
+                            <form action="/signup" method="post" th:object="${memberDto}">
+<!--                            th:object="memberDto"-->
                                 <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
                                 <h3 class="mb-5">Sign up</h3>
 
-                                <div class="form-outline mb-4">
+                                <div class="form-outline mb-4 signup-input">
                                     <input type="text" id="email" name="email"
+                                           th:value="${memberDto?.email}" placeholder="이메일을 입력해주세요."
                                            class="form-control form-control-lg"/>
                                     <label class="form-label" for="email">Email</label>
+                                    <span class="valid-message" th:text="${valid_email}"></span>
                                 </div>
 
-                                <div class="form-outline mb-4">
+                                <div class="form-outline mb-4 signup-input">
                                     <input type="text" id="username" name="username"
+                                           th:value="${memberDto?.username}" placeholder="이름을 입력해주세요."
                                            class="form-control form-control-lg"/>
                                     <label class="form-label" for="username">Username</label>
+                                    <span class="valid-message" th:text="${valid_username}"></span>
                                 </div>
 
-                                <div class="form-outline mb-4">
+                                <div class="form-outline mb-4 signup-input">
                                     <input type="password" id="password" name="password"
+                                           th:value="${memberDto?.password}" placeholder="비밀번호를 입력해주세요."
                                            class="form-control form-control-lg"/>
                                     <label class="form-label" for="password">Password</label>
+                                    <span class="valid-message" th:text="${valid_password}"></span>
                                 </div>
 
                                 <button class="btn btn-primary btn-lg btn-block" type="submit">Sign up</button>
@@ -70,5 +84,10 @@
 
 
 </div>
+<script th:inline="javascript">
+    let message = [[${message}]];
+    if(message)
+    alert(message);
+</script>
 </body>
 </html>
