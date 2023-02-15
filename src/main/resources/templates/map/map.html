@@ -107,13 +107,13 @@
 <body>
 
 <button sec:authorize="isAnonymous()" type="button" id="login" class="btn btn-primary"
-        onclick="">Login
+        onclick="location.href='/login'">Login
 </button>
 <button sec:authorize="isAnonymous()" type="button" id="signin" class="btn btn-primary"
-        onclick="">Sign in
+        onclick="location.href='/signup'">Sign in
 </button>
 <button sec:authorize="isAuthenticated()" type="button" id="logout" class="btn btn-primary"
-        onclick="">Logout
+        onclick="location.href='/logout'">Logout
 </button>
 <div id="map">
     <div style="display: flex">
