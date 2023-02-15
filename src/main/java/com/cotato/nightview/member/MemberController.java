@@ -7,6 +7,7 @@ import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.util.Map;
 
@@ -22,7 +23,7 @@ public class MemberController {
     }
 
     @PostMapping("/signup")
-    public String signup(@Valid @ModelAttribute MemberDto memberDto, Errors errors, Model model) {
+    public String signup(@Valid @ModelAttribute MemberDto memberDto, Errors errors, Model model, RedirectAttributes redirectAttributes, HttpServletRequest request) {
         if (errors.hasErrors()) {
             model.addAttribute("memberDto", memberDto);
             Map<String, String> validatorResult = memberService.validateHandling(errors);
@@ -32,13 +33,15 @@ public class MemberController {
             return "/member/createMemberForm";
         }
         memberService.saveMember(memberDto);
+        redirectAttributes.addFlashAttribute("message", "회원가입이 완료되었습니다!");
         return "redirect:/";
     }
 
     @GetMapping("/login")
-    public String loginForm(@RequestParam(value = "error", required = false) String error,
-                            @RequestParam(value = "exception", required = false) String exception,
-                            Model model) {
+    public String loginForm(@RequestParam(value = "error", required = false) String error, @RequestParam(value = "exception", required = false) String exception, Model model, HttpServletRequest request) {
+        String referrer = request.getHeader("Referer");
+        request.getSession().setAttribute("prevPage", referrer);
+
         model.addAttribute("error", error);
         model.addAttribute("exception", exception);
         return "/member/loginMemberForm";

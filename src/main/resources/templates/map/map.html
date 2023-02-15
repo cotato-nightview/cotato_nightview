@@ -18,7 +18,7 @@
             height: 100vh;
         }
 
-        #signin, #logout {
+        #home, #logout {
             position: absolute;
             right: 20px;
             top: 20px;
@@ -109,8 +109,8 @@
 <button sec:authorize="isAnonymous()" type="button" id="login" class="btn btn-primary"
         onclick="location.href='/login'">Login
 </button>
-<button sec:authorize="isAnonymous()" type="button" id="signin" class="btn btn-primary"
-        onclick="location.href='/signup'">Sign in
+<button sec:authorize="isAnonymous()" type="button" id="home" class="btn btn-primary"
+        onclick="location.href='/'">Home
 </button>
 <button sec:authorize="isAuthenticated()" type="button" id="logout" class="btn btn-primary"
         onclick="location.href='/logout'">Logout

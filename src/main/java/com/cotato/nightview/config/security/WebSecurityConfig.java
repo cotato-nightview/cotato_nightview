@@ -20,6 +20,7 @@ import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
+import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
@@ -31,6 +32,10 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 @RequiredArgsConstructor
 public class WebSecurityConfig {
     private final UserDetailsServiceImpl userDetailsService;
+    @Bean
+    public AuthenticationSuccessHandler authenticationSuccessHandler(){
+        return new CustomAuthenticationSuccessHandler();
+    }
     @Bean
     public AuthenticationFailureHandler authenticationFailureHandler() {
         return new CustomAuthFailureHandler();
@@ -74,8 +79,8 @@ public class WebSecurityConfig {
                 .loginPage("/login")
                 .usernameParameter("email")
                 .loginProcessingUrl("/loginProcess")
+                .successHandler(authenticationSuccessHandler())
                 .failureHandler(authenticationFailureHandler())
-                .defaultSuccessUrl("/")
                 .permitAll()
                 .and()
                 .logout()

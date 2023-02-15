@@ -8,7 +8,6 @@ import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityNotFoundException;
 import javax.transaction.Transactional;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -18,7 +17,7 @@ public class GuService {
 
     @Transactional
     public void initGu() {
-        String areaInfoJson = jsonUtil.readFileAsString("dong_coords.json");
+        String areaInfoJson = jsonUtil.readFileAsString("json/dong_coords.json");
         JSONArray areaInfoArray = jsonUtil.parseJsonArray(areaInfoJson, "areaInfo");
         for (Object areaObj : areaInfoArray) {
             JSONObject areaObjJson = (JSONObject) areaObj;
