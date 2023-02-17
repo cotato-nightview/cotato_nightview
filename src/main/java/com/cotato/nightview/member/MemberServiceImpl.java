@@ -49,8 +49,6 @@ public class MemberServiceImpl implements MemberService {
         memberRepository.save(memberDto.toEntity());
     }
 
-
-
     public Map<String, String> validateHandling(Errors errors) {
         Map<String, String> validatorResult = new HashMap<>();
 
