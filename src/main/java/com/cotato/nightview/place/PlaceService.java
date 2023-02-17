@@ -3,6 +3,8 @@ package com.cotato.nightview.place;
 import com.cotato.nightview.api.NaverExteranlApi;
 import com.cotato.nightview.dong.Dong;
 import com.cotato.nightview.dong.DongService;
+import com.cotato.nightview.gu.Gu;
+import com.cotato.nightview.gu.GuService;
 import lombok.RequiredArgsConstructor;
 import org.json.simple.JSONArray;
 import org.springframework.stereotype.Service;
@@ -16,6 +18,7 @@ public class PlaceService {
     private final PlaceRepository placeRepository;
     private final NaverExteranlApi naverApi;
     private final DongService dongService;
+    private final GuService guService;
     private final PlaceUtil placeUtil;
 
     public String insertPlace(String name) {
@@ -65,7 +68,22 @@ public class PlaceService {
         }
     }
 
-
+    public String makeParamsString(String keyword){
+        double latitude;
+        double longitude;
+        if(keyword.endsWith("구")){
+            Gu gu = guService.findByName(keyword);
+            latitude = gu.getLatitude();
+            longitude = gu.getLongitude();
+        } else {
+            Dong dong = dongService.findByName(keyword);
+            latitude = dong.getLatitude();
+            longitude = dong.getLongitude();
+        }
+        return "?latitude="+latitude+
+                "&longitude="+longitude+
+                "&distance-within=5";
+    }
     private boolean isValidPlace(PlaceDto dto) {
         // 카테고리가 적절한지 검사
         if (!(dto.getCategory().contains("명소") || dto.getCategory().contains("지명"))) return false;
@@ -88,10 +106,6 @@ public class PlaceService {
         }
     }
 
-    public List<Place> findAllByDongIn(List<Dong> dongList) {
-        return placeRepository.findAllByDongIn(dongList);
-    }
-
     public List<Place> findAllWtihInDistance(double longitude, double latitude, double distanceWithIn) {
         validateLocation(longitude, latitude);
         return placeRepository.findAllWtihInDistance(longitude, latitude, distanceWithIn);
@@ -102,7 +116,6 @@ public class PlaceService {
             if (longitude < 131.87 && longitude > 124.6) {
                 return;
             }
-
         throw new IllegalArgumentException("지원하지 않는 위치입니다.");
     }
 

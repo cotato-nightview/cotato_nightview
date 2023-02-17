@@ -101,6 +101,14 @@
             width: 50px;
             display: none;
         }
+
+        #keywordSearchForm {
+            width: 348px;
+        }
+
+        #keywordSearchInput {
+            width: 308px;
+        }
     </style>
 </head>
 
@@ -121,12 +129,17 @@
             <div class="list-group list-group-flush border-bottom scrollarea">
                 <div href="/"
                      class="d-flex align-items-center flex-shrink-0 p-3 link-dark text-decoration-none border-bottom">
-                    <div class="input-group rounded">
-                        <input type="search" class="form-control rounded" placeholder="Search" aria-label="Search"
-                               aria-describedby="search-addon"/>
-                        <button type="submit" class="input-group-text border-0" id="search-addon">
-                            <i class="bi bi-search"></i>
-                        </button>
+                    <div class="input-group rounded" style="display: flex;flex-direction: column">
+                        <form action="/place/map" method="get" id="keywordSearchForm" style="display: flex">
+                            <input type="search" class="form-control rounded" name="keyword" id="keywordSearchInput"
+                                   placeholder="ex) 상수동, 노원구, 충무로2가"
+                                   aria-label="Search"
+                                   aria-describedby="search-addon"/>
+                            <button type="submit" class="input-group-text border-0" id="search-addon">
+                                <i class="bi bi-search"></i>
+                            </button>
+                        </form>
+                        <span style="z-index: 2; color: red" class="valid-message" th:text="${valid_message}"></span>
                     </div>
                 </div>
                 <select class="form-select" id="distanceSelectBox" aria-label="Default select example">

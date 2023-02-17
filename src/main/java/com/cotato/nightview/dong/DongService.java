@@ -8,7 +8,9 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.EntityNotFoundException;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -48,11 +50,12 @@ public class DongService {
 
     public Dong findByAddress(String address) {
         String[] addressSplit = address.split(" ");
-        return dongRepository.findByName(addressSplit[2]);
+        return findByName(addressSplit[2]);
     }
 
-    public List<Dong> findAllByGu(Gu gu) {
-        return dongRepository.findAllByGu(gu);
+    public Dong findByName(String dongName){
+        return dongRepository.findByName(dongName)
+                .orElseThrow(()->new EntityNotFoundException("없는 지역이름입니다!"));
     }
 
     public List<Dong> findAll() {
