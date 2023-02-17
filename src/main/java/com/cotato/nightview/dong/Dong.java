@@ -21,6 +21,8 @@ public class Dong {
     private Long id;
 
     private String name;
+    private double latitude;
+    private double longitude;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "gu_id")
@@ -28,8 +30,10 @@ public class Dong {
 
 
     @Builder
-    public Dong(String name, Gu gu) {
+    public Dong(String name, double latitude, double longitude, Gu gu) {
         this.name = name;
+        this.latitude = latitude;
+        this.longitude = longitude;
         this.gu = gu;
     }
 }

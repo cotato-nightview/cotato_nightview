@@ -19,17 +19,24 @@ public class GuService {
     public void initGu() {
         String areaInfoJson = jsonUtil.readFileAsString("json/dong_coords.json");
         JSONArray areaInfoArray = jsonUtil.parseJsonArray(areaInfoJson, "areaInfo");
+
         for (Object areaObj : areaInfoArray) {
             JSONObject areaObjJson = (JSONObject) areaObj;
+
             String guName = areaObjJson.get("gu").toString();
-            System.out.println(guName);
+            double latitude = (double) areaObjJson.get("lat");
+            double longitude = (double) areaObjJson.get("lng");
+
             // 구 초기화 중복 방지
             if (guRepository.existsByName(guName)) {
                 continue;
             }
 
+            System.out.println(guName);
             GuDto guDto = GuDto.builder()
                     .name(guName)
+                    .latitude(latitude)
+                    .longitude(longitude)
                     .build();
             guRepository.save(guDto.toEntity());
 

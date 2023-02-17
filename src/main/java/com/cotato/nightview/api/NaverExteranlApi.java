@@ -1,6 +1,5 @@
 package com.cotato.nightview.api;
 
-import com.cotato.nightview.api.ExteranlApi;
 import com.cotato.nightview.json.JsonUtil;
 import lombok.RequiredArgsConstructor;
 import org.json.simple.JSONArray;
@@ -18,11 +17,11 @@ import java.net.URI;
 @RequiredArgsConstructor
 @PropertySource("classpath:config.properties")
 public class NaverExteranlApi implements ExteranlApi {
-    @Value("${X-Naver-Client-ID}")
-    private String xNaverClientId;
-    @Value("${X-Naver-Client-Secret}")
-    private String xNaverClientSecret;
     private final JsonUtil jsonUtil;
+    @Value("${api.X-Naver-Client-ID}")
+    private String X_Naver_Client_ID;
+    @Value("${api.X-Naver-Client-Secret}")
+    private String X_Naver_Client_Secret;
 
     // param을 검색어로 검색함
     public JSONArray getPlaces(String param) {
@@ -55,8 +54,8 @@ public class NaverExteranlApi implements ExteranlApi {
     @Override
     public RequestEntity<Void> buildRequestEntity(URI uri) {
         return RequestEntity.get(uri)
-                .header("X-Naver-Client-ID", xNaverClientId)
-                .header("X-Naver-Client-Secret", xNaverClientSecret)
+                .header("X-Naver-Client-ID", X_Naver_Client_ID)
+                .header("X-Naver-Client-Secret", X_Naver_Client_Secret)
                 .build();
     }
 
