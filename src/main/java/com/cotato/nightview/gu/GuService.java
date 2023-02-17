@@ -22,12 +22,12 @@ public class GuService {
         for (Object areaObj : areaInfoArray) {
             JSONObject areaObjJson = (JSONObject) areaObj;
             String guName = areaObjJson.get("gu").toString();
-            System.out.println(guName);
+
             // 구 초기화 중복 방지
             if (guRepository.existsByName(guName)) {
                 continue;
             }
-
+            System.out.println(guName);
             GuDto guDto = GuDto.builder()
                     .name(guName)
                     .build();

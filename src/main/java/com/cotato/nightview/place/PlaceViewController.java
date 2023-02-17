@@ -25,7 +25,6 @@ import java.util.stream.Collectors;
 @Controller
 @RequiredArgsConstructor
 @RequestMapping("/place")
-@PropertySource("classpath:config.properties")
 @Validated
 public class PlaceViewController {
     private final PlaceService placeService;

@@ -19,7 +19,7 @@ public class MemberController {
 
     @GetMapping("/signup")
     public String signupForm() {
-        return "/member/createMemberForm";
+        return "member/createMemberForm";
     }
 
     @PostMapping("/signup")
@@ -30,7 +30,7 @@ public class MemberController {
             for (String key : validatorResult.keySet()) {
                 model.addAttribute(key, validatorResult.get(key));
             }
-            return "/member/createMemberForm";
+            return "member/createMemberForm";
         }
         memberService.saveMember(memberDto);
         redirectAttributes.addFlashAttribute("message", "회원가입이 완료되었습니다!");
@@ -44,7 +44,7 @@ public class MemberController {
 
         model.addAttribute("error", error);
         model.addAttribute("exception", exception);
-        return "/member/loginMemberForm";
+        return "member/loginMemberForm";
     }
 
     @ExceptionHandler({IllegalArgumentException.class})
