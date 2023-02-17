@@ -17,11 +17,14 @@ public class Gu {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "gu_id")
     private Long id;
-
     private String name;
+    private double latitude;
+    private double longitude;
 
     @Builder
-    public Gu(String name) {
+    public Gu(String name, double latitude, double longitude) {
         this.name = name;
+        this.latitude = latitude;
+        this.longitude = longitude;
     }
 }

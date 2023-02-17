@@ -10,15 +10,21 @@ import lombok.*;
 public class DongDto {
     Long id;
     private String name;
+    private double latitude;
+    private double longitude;
 
     @Builder
-    public DongDto(String name) {
+    public DongDto(String name, double latitude, double longitude) {
         this.name = name;
+        this.latitude = latitude;
+        this.longitude = longitude;
     }
 
-    public Dong toEntity(Gu gu){
+    public Dong toEntity(Gu gu) {
         return Dong.builder()
                 .name(name)
+                .latitude(latitude)
+                .longitude(longitude)
                 .gu(gu)
                 .build();
     }
