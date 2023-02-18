@@ -26,6 +26,12 @@
                     rgba(217, 217, 217, 0.5)
             ),
             url("https://images.pexels.com/photos/15375822/pexels-photo-15375822.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2");
+            background-size: cover;
+            overflow-x: hidden;
+            overflow-y: hidden;
+            background-attachment: fixed;
+        }
+
     </style>
 
 
@@ -42,13 +48,16 @@
                                 <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
                                 <h3 class="mb-5">Login</h3>
 
-                                <div class="form-outline mb-4">
+                                <div id="emailInput" class="form-outline mb-4">
                                     <input type="text" id="email" name="email" class="form-control form-control-lg"/>
-                                    <label class="form-label" for="email">Email</label>
+                                    <label class="form-span" for="email">Email</label>
+                                    <p style="color: red" id="valid-message" th:if="error" class="valid-message"
+                                          th:text="${exception}"></p>
                                 </div>
 
                                 <div class="form-outline mb-4">
-                                    <input type="password" id="password" name="password" class="form-control form-control-lg"/>
+                                    <input type="password" id="password" name="password"
+                                           class="form-control form-control-lg"/>
                                     <label class="form-label" for="password">Password</label>
                                 </div>
 

@@ -25,13 +25,10 @@ public class Member implements UserDetails {
     @GeneratedValue(strategy = GenerationType.IDENTITY) //@GeneratedValue : 기본키를 자동 생성해주는 어노테이션
     //IDENTITY 전략은 기본 키 생성을 데이터베이스에 위임하는 전략
     private Long member_id;
-
-    @Column
-    private String username;
-
     @Column
     private String email;
-
+    @Column
+    private String username;
     @Column
     private String password;
 
