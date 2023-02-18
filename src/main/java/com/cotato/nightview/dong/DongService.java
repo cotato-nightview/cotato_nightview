@@ -26,7 +26,13 @@ public class DongService {
         for (Object areaObj : areaInfoArray) {
 
             JSONObject areaObjJson = (JSONObject) areaObj;
-            String dongName = areaObjJson.get("dong").toString();
+            String dongName = null;
+            try {
+                dongName = areaObjJson.get("dong").toString();
+            } catch (Exception e) {
+                continue;
+            }
+
             String guName = areaObjJson.get("gu").toString();
             double latitude = (double) areaObjJson.get("lat");
             double longitude = (double) areaObjJson.get("lng");
