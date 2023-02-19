@@ -3,6 +3,7 @@ package com.cotato.nightview.comment;
 import com.cotato.nightview.member.Member;
 import com.cotato.nightview.place.Place;
 import lombok.*;
+import org.springframework.data.annotation.CreatedDate;
 
 import javax.persistence.*;
 import java.time.LocalTime;
@@ -24,8 +25,11 @@ public class Comment {
 
     @Column
     private String content;
+    @CreatedDate
     @Column
     private LocalTime created_at;
+
+    private String email;
 
 
     //사용자 1명에 댓글 여러개

@@ -34,20 +34,7 @@ public class PlaceViewController {
     private final DongService dongService;
 
     @GetMapping(path = "/map", params = "keyword")
-    public String showMapByGuName(@RequestParam("keyword") @Pattern(regexp = "^[가-힣|0-9]*[동구가]$", message = "'구','동','가'로 끝나야합니다.") String keyword, Model model) {
-//        //gu id를 가져옴 -> gu id인 동을 가져옴
-//        Gu gu = guService.findByName(keyword);
-//        List<Dong> dongList = dongService.findAllByGu(gu);
-//
-//        // 해당 구에 있는 장소들을 가져옴
-//        List<Place> placeEntityList = placeService.findAllByDongIn(dongList);
-//        // javascript 변수로 사용하기 위해 연관 관계가 없는 dto 객체로 변경
-//        List<PlaceDto> placeDtoList = placeUtil.entitiesToDtos(placeEntityList);
-//
-//        model.addAttribute("defaultPlace", placeDtoList.get(0));
-//        model.addAttribute("placeDtoList", placeDtoList);
-//        return "map/map";
-
+    public String showMapByGuName(@RequestParam("keyword") @Pattern(regexp = "^[가-힣|0-9]*[동구가]$", message = "'구','동','가'로 끝나야합니다.") String keyword) {
         return "redirect:/place/map" + placeService.makeParamsString(keyword);
     }
 

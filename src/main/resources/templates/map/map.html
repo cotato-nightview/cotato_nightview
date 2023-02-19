@@ -4,6 +4,8 @@
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8" name="viewport">
+    <meta name="_csrf" th:content="${_csrf.token}">
+    <meta name="_csrf_header" th:content="${_csrf.headerName}">
     <title>Title</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet"
           integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
@@ -88,7 +90,7 @@
             align-self: end;
         }
 
-        #commentForm {
+        .commentForm {
             width: 80%;
             display: flex;
             flex-direction: column;
@@ -108,6 +110,10 @@
 
         #keywordSearchInput {
             width: 308px;
+        }
+
+        .comment-list {
+            border: 3px black !important;
         }
     </style>
 </head>
@@ -131,6 +137,7 @@
                      class="d-flex align-items-center flex-shrink-0 p-3 link-dark text-decoration-none border-bottom">
                     <div class="input-group rounded" style="display: flex;flex-direction: column">
                         <form action="/place/map" method="get" id="keywordSearchForm" style="display: flex">
+                            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
                             <input type="search" class="form-control rounded" name="keyword" id="keywordSearchInput"
                                    placeholder="ex) 상수동, 노원구, 충무로2가"
                                    aria-label="Search"
@@ -150,7 +157,8 @@
                 <span>이내 위치한 장소</span>
                 <!--                db에서 가져온 요소를 반복해서 출력-->
                 <th:block th:each="place : ${placeDtoList}">
-                    <a href="#" class="list-group-item list-group-item-action py-3 lh-sm" th:id="'place'+${place.id}">
+                    <a href="#" class="list-group-item list-group-item-action py-3 lh-sm" th:id="'place'+${place.id}"
+                       onclick="getComment(this.id)">
                         <div class="d-flex w-100 align-items-center justify-content-between">
                             <strong class="mb-1" th:text="${place.title}"></strong>
                             <small class="text-muted"></small>
@@ -167,11 +175,22 @@
             <div th:id="'place'+${place.id}+'-info'" class="place-info" th:each="place : ${placeDtoList}">
                 <a th:text="${place.title}"
                    th:href="@{'https://map.kakao.com/link/to/'+${place.title} + ',' + ${place.latitude} + ',' + ${place.longitude}}"></a>
+
+
+                <div th:id="'place'+${place.id}+'-comment'">
+                </div>
+
+
                 <div class="form-group">
                     <label for="exampleFormControlTextarea1" id="commentLabel">댓글</label>
-                    <form id="commentForm" action="" method="post">
-                        <textarea class="form-control" id="exampleFormControlTextarea1" rows="3"></textarea>
-                        <button type="submit" id="commentSubmitButton" class="btn btn-secondary btn-sm">작성</button>
+                    <form class="commentForm" th:id="'commentForm'+${place.id}">
+                        <input type="hidden" name="email" th:value="${#authentication.name}">
+                        <input type="hidden" name="placeId" th:value="${place.id}">
+                        <textarea class="form-control" name="content" id="exampleFormControlTextarea1"
+                                  rows="3"></textarea>
+                        <button type="button" onclick="postComment(this)" id="commentSubmitButton"
+                                class="btn btn-secondary btn-sm">작성
+                        </button>
                     </form>
                 </div>
             </div>
@@ -192,16 +211,84 @@
     if (message) {
         alert(message);
     }
-    var defaultPlace = [[${defaultPlace}]];
+
+    $.fn.serializeObject = function () {
+        "use strict"
+        var result = {}
+        var extend = function (i, element) {
+            var node = result[element.name]
+            if ("undefined" !== typeof node && node !== null) {
+                if ($.isArray(node)) {
+                    node.push(element.value)
+                } else {
+                    result[element.name] = [node, element.value]
+                }
+            } else {
+                result[element.name] = element.value
+            }
+        }
+
+        $.each(this.serializeArray(), extend)
+        return result
+    }
+
+
+    function postComment(submitButton) {
+        let form = $(submitButton).parent();
+        let commentRequestDto = {
+            email: form.find('input[name="email"]').val(),
+            content: form.find('textarea[name="content"]').val(),
+            placeId: form.find('input[name="placeId"]').val()
+        }
+        $.ajax({
+            type: "post",
+            url: "/comments",
+            data: JSON.stringify(commentRequestDto),
+            // dataType: "json",
+            contentType: "application/json",
+            beforeSend: function (jqXHR, settings) {
+                var header = $("meta[name='_csrf_header']").attr("content");
+                var token = $("meta[name='_csrf']").attr("content");
+                jqXHR.setRequestHeader(header, token);
+            },
+            success: function onData(data) {
+                getComment(commentRequestDto.placeId);
+            }
+        })
+    }
+
+    function getComment(placeTitleId) {
+        const regex = /[^0-9]/g;
+        let placeId = placeTitleId.replace(regex, "");
+        console.log(placeId);
+        $.ajax({
+            type: "get",
+            url: "/comments/" + placeId,
+            success: function onData(commentList) {
+                console.log(commentList)
+                let commentListDiv = $('#place' + placeId + "-comment");
+                let commentListHTML = ""
+                for (let i = 0; i < commentList.length; i++) {
+                    let comment = '<div href="#" class="list-group-item list-group-item-action py-3 lh-sm comment-list">\n' +
+                        '                        <div class="d-flex w-100 align-items-center justify-content-between">\n' +
+                        '                            <strong class="mb-1">' + commentList[i].email + '</strong>\n' +
+                        '                            <small class="text-muted">' + commentList[i].created_at + '</small>\n' +
+                        '                        </div>\n' +
+                        '                        <div class="col-10 mb-1 small">' + commentList[i].content + '</div>\n' +
+                        '                    </div>'
+                    commentListHTML += comment;
+                }
+                commentListDiv.html(commentListHTML);
+            }
+        })
+
+    }
 
     let searchParams = new URLSearchParams(window.location.search);
 
     var placeList = [[${placeDtoList}]];
-    if (defaultPlace) {
-        var map = showMap(defaultPlace.latitude, defaultPlace.longitude);
-    } else {
-        var map = showMap(searchParams.get('latitude'), searchParams.get('longitude'));
-    }
+
+    var map = showMap(searchParams.get('latitude'), searchParams.get('longitude'));
 
     var placePanel = document.getElementById("place-panel")
     var placeInfos = document.getElementsByClassName('place-info');

@@ -20,20 +20,28 @@ public class CommentRequestDto {   //요청으로 부터 정보를 받아 DB에 
 
 
     private String content;
-
     private LocalTime created_at;
+    private String email;
+    private Long placeId;
 
-    private Member member;
-    private Place place;
-
-    public Comment toEntity(){
+    public Comment toEntity(Member member, Place place){
         Comment comment = Comment.builder()
                 .content(content)
                 .created_at(created_at)
+                .email(email)
                 .member(member)
                 .place(place)
                 .build();
         return comment;
     }
 
+    @Override
+    public String toString() {
+        return "CommentRequestDto{" +
+                "content='" + content + '\'' +
+                ", created_at=" + created_at +
+                ", email='" + email + '\'' +
+                ", placeId=" + placeId +
+                '}';
+    }
 }

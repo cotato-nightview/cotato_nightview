@@ -27,6 +27,6 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         } else {
             authorities.add(new SimpleGrantedAuthority(Role.USER.getValue()));
         }
-        return new User(member.getUsername(), member.getPassword(), authorities);
+        return new User(member.getEmail(), member.getPassword(), authorities);
     }
 }

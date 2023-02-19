@@ -111,6 +111,11 @@ public class PlaceService {
         return placeRepository.findAllWtihInDistance(longitude, latitude, distanceWithIn);
     }
 
+    public Place findById(Long id){
+        return placeRepository.findById(id)
+                .orElseThrow(()-> new IllegalArgumentException("존재하지 않는 장소입니다"));
+    }
+
     private void validateLocation(double longitude, double latitude) {
         if (latitude < 38.61 && latitude > 33.11)
             if (longitude < 131.87 && longitude > 124.6) {
