@@ -82,7 +82,6 @@
             align-self: start;
             text-align: start;
             width: 20%;
-            margin-left: 10%;
         }
 
         #commentSubmitButton {
@@ -110,10 +109,6 @@
 
         #keywordSearchInput {
             width: 308px;
-        }
-
-        .comment-list {
-            border: 3px black !important;
         }
     </style>
 </head>
@@ -175,22 +170,21 @@
             <div th:id="'place'+${place.id}+'-info'" class="place-info" th:each="place : ${placeDtoList}">
                 <a th:text="${place.title}"
                    th:href="@{'https://map.kakao.com/link/to/'+${place.title} + ',' + ${place.latitude} + ',' + ${place.longitude}}"></a>
-
-
                 <div th:id="'place'+${place.id}+'-comment'">
                 </div>
-
-
                 <div class="form-group">
-                    <label for="exampleFormControlTextarea1" id="commentLabel">댓글</label>
                     <form class="commentForm" th:id="'commentForm'+${place.id}">
-                        <input type="hidden" name="email" th:value="${#authentication.name}">
+                        <input type="hidden" name="username" th:value="${#authentication.name}">
                         <input type="hidden" name="placeId" th:value="${place.id}">
-                        <textarea class="form-control" name="content" id="exampleFormControlTextarea1"
+                        <label for="commentContent" id="commentLabel">댓글</label>
+                        <textarea sec:authorize="isAuthenticated()" class="form-control" name="content"
+                                  id="commentContent"
                                   rows="3"></textarea>
-                        <button type="button" onclick="postComment(this)" id="commentSubmitButton"
+                        <textarea sec:authorize="isAnonymous()" rows="3" disabled>댓글을 작성하려면 로그인해주세요!</textarea>
+                        <button sec:authorize="isAuthenticated()" type="button" onclick="postComment(this)" id="commentSubmitButton"
                                 class="btn btn-secondary btn-sm">작성
                         </button>
+
                     </form>
                 </div>
             </div>
@@ -212,6 +206,7 @@
         alert(message);
     }
 
+
     $.fn.serializeObject = function () {
         "use strict"
         var result = {}
@@ -227,7 +222,6 @@
                 result[element.name] = element.value
             }
         }
-
         $.each(this.serializeArray(), extend)
         return result
     }
@@ -236,23 +230,27 @@
     function postComment(submitButton) {
         let form = $(submitButton).parent();
         let commentRequestDto = {
-            email: form.find('input[name="email"]').val(),
+            username: form.find('input[name="username"]').val(),
             content: form.find('textarea[name="content"]').val(),
             placeId: form.find('input[name="placeId"]').val()
         }
+
         $.ajax({
             type: "post",
             url: "/comments",
             data: JSON.stringify(commentRequestDto),
-            // dataType: "json",
             contentType: "application/json",
             beforeSend: function (jqXHR, settings) {
                 var header = $("meta[name='_csrf_header']").attr("content");
                 var token = $("meta[name='_csrf']").attr("content");
                 jqXHR.setRequestHeader(header, token);
             },
-            success: function onData(data) {
+            success: function (data) {
+                $(submitButton).siblings('textarea[id="commentContent"]').val("");
                 getComment(commentRequestDto.placeId);
+            },
+            error: function (error) {
+                alert(error.responseJSON.content);
             }
         })
     }
@@ -260,19 +258,17 @@
     function getComment(placeTitleId) {
         const regex = /[^0-9]/g;
         let placeId = placeTitleId.replace(regex, "");
-        console.log(placeId);
         $.ajax({
             type: "get",
             url: "/comments/" + placeId,
             success: function onData(commentList) {
-                console.log(commentList)
                 let commentListDiv = $('#place' + placeId + "-comment");
                 let commentListHTML = ""
                 for (let i = 0; i < commentList.length; i++) {
-                    let comment = '<div href="#" class="list-group-item list-group-item-action py-3 lh-sm comment-list">\n' +
+                    let comment = '<div class="list-group-item list-group-item-action py-3 lh-sm comment-list">\n' +
                         '                        <div class="d-flex w-100 align-items-center justify-content-between">\n' +
-                        '                            <strong class="mb-1">' + commentList[i].email + '</strong>\n' +
-                        '                            <small class="text-muted">' + commentList[i].created_at + '</small>\n' +
+                        '                            <strong class="mb-1">' + commentList[i].username + '</strong>\n' +
+                        '                            <small class="text-muted">' + elapsedTime(commentList[i].createdAt) + '</small>\n' +
                         '                        </div>\n' +
                         '                        <div class="col-10 mb-1 small">' + commentList[i].content + '</div>\n' +
                         '                    </div>'
@@ -317,6 +313,7 @@
             break;
         }
     }
+
 </script>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"
