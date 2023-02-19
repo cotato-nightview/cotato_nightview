@@ -47,6 +47,11 @@ public class MemberServiceImpl implements MemberService {
                 .orElseThrow(()-> new IllegalArgumentException("존재하지 않는 이메일입니다."));
     }
 
+    public Member findByUsername(String username){
+        return memberRepository.findByUsername(username)
+                .orElseThrow(()-> new IllegalArgumentException("존재하지 않는 사용자 이름입니다."));
+    }
+
     @Transactional
     public void saveMember(MemberDto memberDto) {
         validateDuplicateMember(memberDto);

@@ -44,7 +44,7 @@
                 <div class="col-12 col-md-8 col-lg-6 col-xl-5">
                     <div class="card shadow-2-strong" style="border-radius: 1rem;">
                         <div class="card-body p-5 text-center">
-                            <form action="/loginProcess" method="post">
+                            <form action="/loginProcess" method="post" style="display:flex;flex-direction: column">
                                 <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
                                 <h3 class="mb-5">Login</h3>
 
@@ -60,7 +60,7 @@
                                            class="form-control form-control-lg"/>
                                     <label class="form-label" for="password">Password</label>
                                 </div>
-
+                                <a style="margin-bottom: 24px" href="/signup">Signup</a>
                                 <button class="btn btn-primary btn-lg btn-block" type="submit">Login</button>
                             </form>
                         </div>
@@ -69,20 +69,6 @@
             </div>
         </div>
     </section>
-    <!--    <main class="form-signin w-100 m-auto">-->
-    <!--        <form action="/loginProcess" method="post" style="width:700px">-->
-    <!--            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>-->
-    <!--            <p class="register">로그인</p>-->
-    <!--            <label for="username" class="form-label"> 아이디 </label>-->
-    <!--            <input name="username" id="username" type="text" class="input">-->
-
-    <!--            <label for="password" class="form-label"> 비밀번호 </label>-->
-    <!--            <input name="password" id="password" type="password" class="input">-->
-    <!--            <button type="submit">가입</button>-->
-    <!--            &nbsp;-->
-    <!--            &nbsp;-->
-    <!--        </form>-->
-    <!--    </main>-->
 
 </div>
 </body>

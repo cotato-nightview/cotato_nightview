@@ -40,6 +40,7 @@ function hideLastClicked() {
 
 function showClickedPlace(placeInfo) {
     lastClicked = placeInfo;
+    getComment(placeInfo.id);
     placePanel.style.display = "block";
     placeInfo.style.display = "block";
 }

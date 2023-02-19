@@ -61,7 +61,7 @@ public class DongService {
 
     public Dong findByName(String dongName){
         return dongRepository.findByName(dongName)
-                .orElseThrow(()->new EntityNotFoundException("없는 지역이름입니다!"));
+                .orElseThrow(()->new EntityNotFoundException("존재하지 않는 지역 이름입니다!"));
     }
 
     public List<Dong> findAll() {

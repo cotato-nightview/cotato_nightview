@@ -4,18 +4,20 @@ import com.cotato.nightview.member.Member;
 import com.cotato.nightview.place.Place;
 import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 
 
 @Table(name = "comment")
-@Getter
-@Setter
+@Getter @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 @Entity
+@EntityListeners(AuditingEntityListener.class)
 public class Comment {
 
     @Id
@@ -27,9 +29,9 @@ public class Comment {
     private String content;
     @CreatedDate
     @Column
-    private LocalTime created_at;
+    private LocalDateTime createdAt;
 
-    private String email;
+    private String username;
 
 
     //사용자 1명에 댓글 여러개
@@ -45,9 +47,9 @@ public class Comment {
 
 
     @Builder
-    public Comment(String content, LocalTime created_at, Member member, Place place) {
+    public Comment(String content, LocalDateTime createdAt, Member member, Place place) {
         this.content = content;
-        this.created_at = created_at;
+        this.createdAt = createdAt;
         this.member = member;
         this.place = place;
     }

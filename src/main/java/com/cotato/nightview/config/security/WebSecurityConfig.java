@@ -73,6 +73,7 @@ public class WebSecurityConfig {
         http.authorizeRequests()
                 .antMatchers("/admin/**").hasRole("ADMIN")
                 .antMatchers("/user/**").hasRole("USER")
+                .antMatchers("/comments").hasRole("USER")
                 .antMatchers("/**").permitAll() // 그외 나머지 요청은 누구나 접근 가능
                 .and()
                 .formLogin()

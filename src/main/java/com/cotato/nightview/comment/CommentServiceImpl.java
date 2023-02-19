@@ -28,7 +28,7 @@ public class CommentServiceImpl implements CommentService{
     @Transactional
     @Override
     public void saveComment(CommentRequestDto commentRequestDto){
-        Member member = memberService.findByEmail(commentRequestDto.getEmail());
+        Member member = memberService.findByUsername(commentRequestDto.getUsername());
         Place place = placeService.findById(commentRequestDto.getPlaceId());
         commentRepository.save(commentRequestDto.toEntity(member,place));
          //이거 맞는지 잘 모르겟

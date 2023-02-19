@@ -8,6 +8,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 
 @NoArgsConstructor
@@ -16,16 +17,18 @@ import java.time.LocalTime;
 public class CommentResponseDto {
     private Long id;
     private String content;
-    private LocalTime created_at;
-    private String email;
+    private LocalDateTime createdAt;
+    private String username;
     private Long placeId;
 
-//    @Builder
-//    public CommentResponseDto(Comment comment) {
-//        this.content = comment.getContent();
-//        this.created_at = comment.getCreated_at();
-//        this.member = comment.getMember();
-//        this.place = comment.getPlace();
-//    }
-
+    @Override
+    public String toString() {
+        return "CommentResponseDto{" +
+                "id=" + id +
+                ", content='" + content + '\'' +
+                ", createdAt=" + createdAt +
+                ", username='" + username + '\'' +
+                ", placeId=" + placeId +
+                '}';
+    }
 }

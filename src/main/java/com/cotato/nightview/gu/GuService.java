@@ -45,6 +45,6 @@ public class GuService {
 
     public Gu findByName(String guName) {
         return guRepository.findByName(guName)
-                .orElseThrow(()->new EntityNotFoundException("없는 지역이름입니다!"));
+                .orElseThrow(()->new EntityNotFoundException("존재하지 않는 지역 이름입니다!"));
     }
 }

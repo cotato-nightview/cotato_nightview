@@ -1,15 +1,16 @@
 package com.cotato.nightview.comment;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.ui.Model;
+import org.springframework.validation.Errors;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 
-import java.nio.charset.Charset;
+import javax.validation.Valid;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
@@ -18,22 +19,24 @@ public class CommentRestController {
     private final CommentService commentService;
 
     @GetMapping("/{place_id}")
-    public List<CommentResponseDto> viewComments(@PathVariable(name = "place_id") Long placeId) {
-        return commentService.findAllByPlaceId(placeId);
+    public ResponseEntity<List<CommentResponseDto>> viewComments(@PathVariable(name = "place_id") Long placeId) {
+        List<CommentResponseDto> commentList = commentService.findAllByPlaceId(placeId);
+        for (CommentResponseDto commentResponseDto : commentList) {
+            System.out.println("commentResponseDto = " + commentResponseDto.toString());
+        }
+        return ResponseEntity.status(HttpStatus.OK).body(commentList);
     }
 
-//    @PostMapping("")
-//    public ResponseEntity<CommentResponseDto> createComment(@RequestBody CommentRequestDto commentRequestDto) {
-//        System.out.println(commentRequestDto.toString());
-//        commentService.saveComment(commentRequestDto);
-//        return new ResponseEntity<>(HttpStatus.OK);
-////        return commentRequestDto.toString();
-//    }
     @PostMapping("")
-    public String createComment(@RequestBody CommentRequestDto commentRequestDto) {
-        System.out.println(commentRequestDto.toString());
+    public ResponseEntity createComment(@Valid @RequestBody CommentRequestDto commentRequestDto, Errors errors) {
+        if (errors.hasErrors()) {
+            Map<String, String> errorMap = new HashMap<>();
+            for (FieldError error : errors.getFieldErrors()) {
+                errorMap.put(error.getField(), error.getDefaultMessage());
+            }
+            return new ResponseEntity(errorMap, HttpStatus.BAD_REQUEST);
+        }
         commentService.saveComment(commentRequestDto);
-        return commentRequestDto.getEmail();
-//        return commentRequestDto.toString();
+        return new ResponseEntity(HttpStatus.OK);
     }
 }
