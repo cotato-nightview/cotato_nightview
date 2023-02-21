@@ -1,9 +1,12 @@
 package com.cotato.nightview.comment;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+
 import java.util.List;
 
 public interface CommentService {
     void saveComment(CommentRequestDto commentRequestDto);
-    void deleteComment(Long id);
-    List<CommentResponseDto> findAllByPlaceId(Long id);
+    void deleteComment(CommentRequestDto commentRequestDto);
+    Page<CommentResponseDto> findAllByPlaceId(Long id, Pageable pageable);
 }

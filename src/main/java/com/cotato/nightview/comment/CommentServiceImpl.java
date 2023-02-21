@@ -10,6 +10,9 @@ import com.cotato.nightview.place.PlaceService;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -23,8 +26,6 @@ public class CommentServiceImpl implements CommentService{
     private final MemberServiceImpl memberService;
     private final PlaceService placeService;
     private final CommentRepository commentRepository;
-    private final ModelMapper modelMapper;
-
     @Transactional
     @Override
     public void saveComment(CommentRequestDto commentRequestDto){
@@ -36,20 +37,19 @@ public class CommentServiceImpl implements CommentService{
 
     @Transactional
     @Override
-    public void deleteComment(Long id){
-        Comment comment = commentRepository.findById(id).get(); //.get 추가
+    public void deleteComment(CommentRequestDto commentRequestDto){
+        Comment comment = commentRepository.findById(commentRequestDto.getId()).get(); //.get 추가
         commentRepository.delete(comment);
     }
 
     @Override
-    public List<CommentResponseDto> findAllByPlaceId(Long placeId){
-        List<Comment> commentList = commentRepository.findAllByPlaceId(placeId);
-        return entitiesToDtos(commentList);
+    public Page<CommentResponseDto> findAllByPlaceId(Long placeId, Pageable pageable){
+        Page<Comment> commentEntityList = commentRepository.findAllByPlaceId(placeId,pageable);
+        return entitiesToDtos(commentEntityList);
     }
 
-    public List<CommentResponseDto> entitiesToDtos(List<Comment> commentEntityList) {
-        return commentEntityList.stream().map(comment -> modelMapper.map(comment, CommentResponseDto.class))
-                .collect(Collectors.toList());
+    public Page<CommentResponseDto> entitiesToDtos(Page<Comment> commentEntityList) {
+        return commentEntityList.map(Comment::toResponseDto);
     }
 
 }

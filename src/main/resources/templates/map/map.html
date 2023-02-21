@@ -55,6 +55,7 @@
             display: none;
             z-index: 2;
             float: right;
+            height: 100vh;
         }
 
         .place-info {
@@ -110,20 +111,36 @@
         #keywordSearchInput {
             width: 308px;
         }
+
+        .comment-list {
+            display: flex;
+            flex-direction: column;
+        }
+
+        #username {
+            position: absolute;
+            right: 200px;
+            top: 20px;
+            z-index: 2;
+        }
+
     </style>
 </head>
 
 <body>
+<header>
+    <a sec:authentication="name" id="username" href="#"></a>
+    <button sec:authorize="isAnonymous()" type="button" id="login" class="btn btn-primary"
+            onclick="location.href='/login'">Login
+    </button>
+    <button sec:authorize="isAnonymous()" type="button" id="home" class="btn btn-primary"
+            onclick="location.href='/'">Home
+    </button>
+    <button sec:authorize="isAuthenticated()" type="button" id="logout" class="btn btn-primary"
+            onclick="location.href='/logout'">Logout
+    </button>
+</header>
 
-<button sec:authorize="isAnonymous()" type="button" id="login" class="btn btn-primary"
-        onclick="location.href='/login'">Login
-</button>
-<button sec:authorize="isAnonymous()" type="button" id="home" class="btn btn-primary"
-        onclick="location.href='/'">Home
-</button>
-<button sec:authorize="isAuthenticated()" type="button" id="logout" class="btn btn-primary"
-        onclick="location.href='/logout'">Logout
-</button>
 <div id="map">
     <div style="display: flex">
         <div class="d-flex flex-column align-items-stretch flex-shrink-0 bg-white" id="sidebar">
@@ -153,7 +170,7 @@
                 <!--                db에서 가져온 요소를 반복해서 출력-->
                 <th:block th:each="place : ${placeDtoList}">
                     <a href="#" class="list-group-item list-group-item-action py-3 lh-sm" th:id="'place'+${place.id}"
-                       onclick="getComment(this.id)">
+                       onclick="getComment(this.id);">
                         <div class="d-flex w-100 align-items-center justify-content-between">
                             <strong class="mb-1" th:text="${place.title}"></strong>
                             <small class="text-muted"></small>
@@ -167,11 +184,15 @@
 
         <!--목록 클릭시 표시되는 정보들-->
         <div id="place-panel">
-            <div th:id="'place'+${place.id}+'-info'" class="place-info" th:each="place : ${placeDtoList}">
+            <div th:id="'place'+${place.id}+'-info'" class="place-info scrollarea" th:each="place : ${placeDtoList}">
                 <a th:text="${place.title}"
                    th:href="@{'https://map.kakao.com/link/to/'+${place.title} + ',' + ${place.latitude} + ',' + ${place.longitude}}"></a>
                 <div th:id="'place'+${place.id}+'-comment'">
                 </div>
+                <nav aria-label="Page navigation example" style="display: flex; justify-content: center;">
+                    <ul th:id="'pagination'+${place.id}" style="align-self: center" class="pagination">
+                    </ul>
+                </nav>
                 <div class="form-group">
                     <form class="commentForm" th:id="'commentForm'+${place.id}">
                         <input type="hidden" name="username" th:value="${#authentication.name}">
@@ -181,14 +202,15 @@
                                   id="commentContent"
                                   rows="3"></textarea>
                         <textarea sec:authorize="isAnonymous()" rows="3" disabled>댓글을 작성하려면 로그인해주세요!</textarea>
-                        <button sec:authorize="isAuthenticated()" type="button" onclick="postComment(this)" id="commentSubmitButton"
+                        <button sec:authorize="isAuthenticated()" type="button" onclick="postComment(this)"
+                                id="commentSubmitButton"
                                 class="btn btn-secondary btn-sm">작성
                         </button>
 
                     </form>
                 </div>
-            </div>
 
+            </div>
         </div>
         <button id="closeButton" type="button" class="btn btn-secondary"><i class="bi bi-x-lg"></i></button>
 
@@ -200,32 +222,14 @@
 <script th:src="@{/js/kakaoMap.js}"></script>
 <script th:src="@{/js/util.js}"></script>
 <script th:src="@{/js/event.js}"></script>
+<script th:src="@{/js/comment.js}"></script>
 <script th:inline="javascript">
     let message = [[${message}]];
     if (message) {
         alert(message);
     }
 
-
-    $.fn.serializeObject = function () {
-        "use strict"
-        var result = {}
-        var extend = function (i, element) {
-            var node = result[element.name]
-            if ("undefined" !== typeof node && node !== null) {
-                if ($.isArray(node)) {
-                    node.push(element.value)
-                } else {
-                    result[element.name] = [node, element.value]
-                }
-            } else {
-                result[element.name] = element.value
-            }
-        }
-        $.each(this.serializeArray(), extend)
-        return result
-    }
-
+    setSelectedValue()
 
     function postComment(submitButton) {
         let form = $(submitButton).parent();
@@ -255,34 +259,60 @@
         })
     }
 
-    function getComment(placeTitleId) {
-        const regex = /[^0-9]/g;
-        let placeId = placeTitleId.replace(regex, "");
+    function deleteComment(deleteButton) {
+        let form = $(deleteButton).siblings('form');
+        let currentPage = form.find('input[name="currentPage"]').val();
+        let placeId = form.find('input[name=placeId]').val();
+        let commentRequestDto = {
+            id: form.find('input[name="id"]').val(),
+            username: form.find('input[name="username"]').val(),
+        }
+        console.log(commentRequestDto);
         $.ajax({
-            type: "get",
-            url: "/comments/" + placeId,
-            success: function onData(commentList) {
-                let commentListDiv = $('#place' + placeId + "-comment");
-                let commentListHTML = ""
-                for (let i = 0; i < commentList.length; i++) {
-                    let comment = '<div class="list-group-item list-group-item-action py-3 lh-sm comment-list">\n' +
-                        '                        <div class="d-flex w-100 align-items-center justify-content-between">\n' +
-                        '                            <strong class="mb-1">' + commentList[i].username + '</strong>\n' +
-                        '                            <small class="text-muted">' + elapsedTime(commentList[i].createdAt) + '</small>\n' +
-                        '                        </div>\n' +
-                        '                        <div class="col-10 mb-1 small">' + commentList[i].content + '</div>\n' +
-                        '                    </div>'
-                    commentListHTML += comment;
-                }
-                commentListDiv.html(commentListHTML);
+            type: "post",
+            url: "/comments/delete",
+            data: JSON.stringify(commentRequestDto),
+            contentType: "application/json",
+            beforeSend: function (jqXHR, settings) {
+                var header = $("meta[name='_csrf_header']").attr("content");
+                var token = $("meta[name='_csrf']").attr("content");
+                jqXHR.setRequestHeader(header, token);
+            },
+            success: function (data) {
+                getComment(placeId, currentPage);
+            },
+            error: function (error) {
+                alert(error.responseJSON.content);
             }
         })
-
     }
 
-    let searchParams = new URLSearchParams(window.location.search);
+
+    function getComment(placeTitleId, requestPage = 0) {
+        let placeId
+        if (typeof placeTitleId === 'string' || placeTitleId instanceof String) {
+            const regex = /[^0-9]/g;
+            placeId = placeTitleId.replace(regex, "");
+        } else {
+            placeId = placeTitleId;
+        }
+        const authorizedUsername = $('#commentForm' + placeId).find('input[name="username"]').val();
+        $.ajax({
+            type: "get",
+            url: "/comments/" + placeId + '?page=' + requestPage + '&size=8&sort=createdAt,desc',
+            async: false,
+            success: function onData(data) {
+                let commentListHTML = getCommentListHTML(data, authorizedUsername);
+                console.log(data);
+                $('#place' + placeId + "-comment").html(commentListHTML);
+                let pagiantionHTML = getPaginationHTML(data, placeId);
+                $('#pagination' + placeId).html(pagiantionHTML);
+            }
+        })
+    }
 
     var placeList = [[${placeDtoList}]];
+    let searchParams = new URLSearchParams(window.location.search);
 
     var map = showMap(searchParams.get('latitude'), searchParams.get('longitude'));
 
@@ -303,17 +333,6 @@
     addHideInfoEvent();
 
     addDistanceChangeEvent();
-
-    var select = document.getElementById("distanceSelectBox");
-    var urlParams = new URLSearchParams(window.location.search);
-    var distance = urlParams.get("distance-within");
-    for (var i = 0; i < select.options.length; i++) {
-        if (select.options[i].value == distance) {
-            select.selectedIndex = i;
-            break;
-        }
-    }
-
 </script>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"

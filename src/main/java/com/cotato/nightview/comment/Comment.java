@@ -54,4 +54,26 @@ public class Comment {
         this.place = place;
     }
 
+    public CommentResponseDto toResponseDto(){
+        CommentResponseDto responseDto = CommentResponseDto.builder()
+                .id(id)
+                .username(member.getUsername())
+                .placeId(place.getId())
+                .content(content)
+                .createdAt(createdAt)
+                .build();
+        return responseDto;
+    }
+
+    @Override
+    public String toString() {
+        return "Comment{" +
+                "id=" + id +
+                ", content='" + content + '\'' +
+                ", createdAt=" + createdAt +
+                ", username='" + username + '\'' +
+                ", member=" + member +
+                ", place=" + place +
+                '}';
+    }
 }

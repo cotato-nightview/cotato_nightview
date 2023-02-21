@@ -1,6 +1,8 @@
 package com.cotato.nightview.comment;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.Errors;
@@ -19,12 +21,8 @@ public class CommentRestController {
     private final CommentService commentService;
 
     @GetMapping("/{place_id}")
-    public ResponseEntity<List<CommentResponseDto>> viewComments(@PathVariable(name = "place_id") Long placeId) {
-        List<CommentResponseDto> commentList = commentService.findAllByPlaceId(placeId);
-        for (CommentResponseDto commentResponseDto : commentList) {
-            System.out.println("commentResponseDto = " + commentResponseDto.toString());
-        }
-        return ResponseEntity.status(HttpStatus.OK).body(commentList);
+    public Page<CommentResponseDto> getComments(@PathVariable(name = "place_id") Long placeId, Pageable pageable) {
+        return  commentService.findAllByPlaceId(placeId, pageable);
     }
 
     @PostMapping("")
@@ -36,7 +34,15 @@ public class CommentRestController {
             }
             return new ResponseEntity(errorMap, HttpStatus.BAD_REQUEST);
         }
+        System.out.println(commentRequestDto.toString());
         commentService.saveComment(commentRequestDto);
+        return new ResponseEntity(HttpStatus.OK);
+    }
+
+    @PostMapping("/delete")
+    public ResponseEntity deleteComment(@RequestBody CommentRequestDto commentRequestDto) {
+        System.out.println(commentRequestDto.toString());
+        commentService.deleteComment(commentRequestDto);
         return new ResponseEntity(HttpStatus.OK);
     }
 }

@@ -31,4 +31,14 @@ public class CommentResponseDto {
                 ", placeId=" + placeId +
                 '}';
     }
+
+    @Builder
+    public CommentResponseDto(Long id, String content, LocalDateTime createdAt, String username, Long placeId) {
+        this.id= id;
+        this.content = content;
+        this.createdAt = createdAt;
+        this.username = username;
+        this.placeId = placeId;
+    }
+
 }

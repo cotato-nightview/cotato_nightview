@@ -19,11 +19,11 @@ import java.time.LocalTime;
 @NoArgsConstructor
 @Builder
 public class CommentRequestDto {   //요청으로 부터 정보를 받아 DB에 저장할 때
+    private Long id;
     @NotBlank(message = "내용을 입력해주세요.")
     private String content;
     private String username;
     private Long placeId;
-
     public Comment toEntity(Member member, Place place){
         Comment comment = Comment.builder()
                 .content(content)
@@ -37,8 +37,9 @@ public class CommentRequestDto {   //요청으로 부터 정보를 받아 DB에 
     @Override
     public String toString() {
         return "CommentRequestDto{" +
-                "content='" + content + '\'' +
-                ", email='" + username + '\'' +
+                "id=" + id +
+                ", content='" + content + '\'' +
+                ", username='" + username + '\'' +
                 ", placeId=" + placeId +
                 '}';
     }
