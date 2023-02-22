@@ -19,7 +19,9 @@ import java.time.LocalTime;
 @NoArgsConstructor
 @Builder
 public class CommentRequestDto {   //요청으로 부터 정보를 받아 DB에 저장할 때
+    //앞의 엔터티에서 시간 자동으로 채워주므로 없음
     private Long id;
+
     @NotBlank(message = "내용을 입력해주세요.")
     private String content;
     private String username;
