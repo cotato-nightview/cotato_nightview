@@ -19,7 +19,7 @@ function getCommentListHTML(data, authorizedUsername) {
     let commentListHTML = "";
     console.log(authorizedUsername);
     for (let i = 0; i < commentList.length; i++) {
-        let comment = '<div th:with="username=${#authentication.name}" id="commentwrapper' + commentList[i].id + '" class="list-group-item list-group-item-action py-3 lh-sm comment-list">\n' +
+        let comment = '<div style="border-bottom: gray 1px solid; border-top: gray 1px solid" th:with="username=${#authentication.name}" id="commentwrapper' + commentList[i].id + '" class="list-group-item list-group-item-action py-3 lh-sm comment-list">\n' +
             '               <form>\n' +
             '                   <input type="hidden" name="currentPage" value="' + data.pageable.pageNumber + '">\n' +
             '                   <input type="hidden" name="username" value="' + commentList[i].username + '">\n' +
@@ -33,8 +33,8 @@ function getCommentListHTML(data, authorizedUsername) {
             '               </div>\n' +
             '               <div style="text-align: start;padding-left: 30px" class="col-10 mb-1 small">' + commentList[i].content + '</div>';
         if (authorizedUsername == commentList[i].username) {
-            comment += '<div style="align-self: end" onclick="deleteComment(this)"><a href="#">삭제</a></div>\n' +
-                '<div style="align-self: end" onclick="updateComment(this)"><a href="#">수정</a></div>';
+            comment += '<div style="padding-bottom: 5px; text-align: end" onclick="deleteComment(this)"><a href="#">삭제</a></div>\n' +
+                '<div style="text-align: end" onclick="updateComment(this)"><a href="#">수정</a></div>';
         }
         comment += '</div>';
         commentListHTML += comment;

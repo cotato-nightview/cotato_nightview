@@ -9,21 +9,18 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Map;
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/likedplace")
 public class LikePlaceController {
-
     private final LikePlaceService likePlaceService;
 
     @PostMapping("/like")
-    public ResponseEntity<?> addLike(@RequestBody LikePlaceRequestDto likePlaceRequestDto){
-        boolean result = false;
-        result = likePlaceService.addLike(likePlaceRequestDto);
-
-        return result ?
-                new ResponseEntity<>(HttpStatus.OK)
-                : new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+    public ResponseEntity<Map<String,Boolean>> addLike(@RequestBody LikePlaceRequestDto likePlaceRequestDto){
+        System.out.println(likePlaceRequestDto);
+        return ResponseEntity.ok().body(likePlaceService.addLike(likePlaceRequestDto));
     }
 
 

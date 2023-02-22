@@ -3,8 +3,11 @@ package com.cotato.nightview.member;
 
 import lombok.RequiredArgsConstructor;
 
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -42,14 +45,14 @@ public class MemberServiceImpl implements MemberService {
 //                .orElse(null);
 //    }
 
-    public Member findByEmail(String email){
+    public Member findByEmail(String email) {
         return memberRepository.findByEmail(email)
-                .orElseThrow(()-> new IllegalArgumentException("존재하지 않는 이메일입니다."));
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 이메일입니다."));
     }
 
-    public Member findByUsername(String username){
+    public Member findByUsername(String username) {
         return memberRepository.findByUsername(username)
-                .orElseThrow(()-> new IllegalArgumentException("존재하지 않는 사용자 이름입니다."));
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 사용자 이름입니다."));
     }
 
     @Transactional
@@ -74,8 +77,24 @@ public class MemberServiceImpl implements MemberService {
         if (memberRepository.existsByEmail(memberDto.getEmail())) {
             throw new IllegalArgumentException("이미 가입된 이메일입니다.");
         }
-        if(memberRepository.existsByUsername(memberDto.getUsername())){
+        if (memberRepository.existsByUsername(memberDto.getUsername())) {
             throw new IllegalArgumentException("이미 가입된 회원 이름입니다.");
         }
+    }
+
+    public String getAuthUsername() {
+        Authentication principal = SecurityContextHolder.getContext().getAuthentication();
+//        UserDetails userDetails = (UserDetails) principal;
+        return principal.getName();
+    }
+
+    public boolean isLoggedin() {
+        Authentication principal = SecurityContextHolder.getContext().getAuthentication();
+        if (principal instanceof AnonymousAuthenticationToken) {
+            return false;
+        } else {
+            return true;
+        }
+
     }
 }

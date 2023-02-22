@@ -17,16 +17,19 @@ public class PlaceDto {
     @JsonAlias("mapx")
     private double longitude;
     @JsonAlias("mapy")
-
     private double latitude;
+    private boolean isLiked;
+    private Long numberOfComment;
 
     @Builder
-    public PlaceDto(String title, String address, String roadAddress, double longitude, double latitude) {
+    public PlaceDto(String title, String address, String roadAddress, double longitude, double latitude,boolean isLiked,Long numberOfComment) {
         this.title = title;
         this.address = address;
         this.roadAddress = roadAddress;
         this.longitude = longitude;
         this.latitude = latitude;
+        this.isLiked = isLiked;
+        this.numberOfComment = numberOfComment;
     }
 
     public Place toEntity(Dong dong) {
@@ -50,6 +53,7 @@ public class PlaceDto {
                 ", roadAddress='" + roadAddress + '\'' +
                 ", longitude=" + longitude +
                 ", latitude=" + latitude +
+                ", isLiked=" + isLiked +
                 '}';
     }
 }

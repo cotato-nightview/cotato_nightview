@@ -13,9 +13,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 public class LikePlaceRequestDto {
-
-    private Long id;
-
     private String username;
     private Long placeId;
 
@@ -25,5 +22,13 @@ public class LikePlaceRequestDto {
                 .place(place)
                 .build();
         return likePlace;
+    }
+
+    @Override
+    public String toString() {
+        return "LikePlaceRequestDto{" +
+                ", username='" + username + '\'' +
+                ", placeId=" + placeId +
+                '}';
     }
 }

@@ -1,16 +1,24 @@
 package com.cotato.nightview.place;
 
 import com.cotato.nightview.api.NaverExteranlApi;
+import com.cotato.nightview.comment.CommentRepository;
 import com.cotato.nightview.dong.Dong;
 import com.cotato.nightview.dong.DongService;
 import com.cotato.nightview.gu.Gu;
 import com.cotato.nightview.gu.GuService;
+import com.cotato.nightview.like_place.LikePlaceRepository;
+import com.cotato.nightview.like_place.LikePlaceServiceImpl;
+import com.cotato.nightview.member.Member;
+import com.cotato.nightview.member.MemberServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.json.simple.JSONArray;
+import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -20,6 +28,10 @@ public class PlaceService {
     private final DongService dongService;
     private final GuService guService;
     private final PlaceUtil placeUtil;
+    private final MemberServiceImpl memberService;
+    private final ModelMapper modelMapper;
+    private final LikePlaceRepository likePlaceRepository;
+    private final CommentRepository commentRepository;
 
     public String insertPlace(String name) {
 
@@ -68,10 +80,10 @@ public class PlaceService {
         }
     }
 
-    public String makeParamsString(String keyword){
+    public String makeParamsString(String keyword) {
         double latitude;
         double longitude;
-        if(keyword.endsWith("구")){
+        if (keyword.endsWith("구")) {
             Gu gu = guService.findByName(keyword);
             latitude = gu.getLatitude();
             longitude = gu.getLongitude();
@@ -80,10 +92,11 @@ public class PlaceService {
             latitude = dong.getLatitude();
             longitude = dong.getLongitude();
         }
-        return "?latitude="+latitude+
-                "&longitude="+longitude+
+        return "?latitude=" + latitude +
+                "&longitude=" + longitude +
                 "&distance-within=5";
     }
+
     private boolean isValidPlace(PlaceDto dto) {
         // 카테고리가 적절한지 검사
         if (!(dto.getCategory().contains("명소") || dto.getCategory().contains("지명"))) return false;
@@ -106,14 +119,38 @@ public class PlaceService {
         }
     }
 
-    public List<Place> findAllWtihInDistance(double longitude, double latitude, double distanceWithIn) {
+    public List<PlaceDto> findAllWtihInDistance(double longitude, double latitude, double distanceWithIn) {
         validateLocation(longitude, latitude);
-        return placeRepository.findAllWtihInDistance(longitude, latitude, distanceWithIn);
+        List<Place> placeEntityList = placeRepository.findAllWtihInDistance(longitude, latitude, distanceWithIn);
+        return entitiesToDtos(placeEntityList);
     }
 
-    public Place findById(Long id){
+    public List<PlaceDto> entitiesToDtos(List<Place> placeEntityList) {
+        ArrayList<PlaceDto> placeDtoList = new ArrayList<>();
+        placeEntityList.forEach(place -> {
+            PlaceDto placeDto = modelMapper.map(place, PlaceDto.class);
+            if (memberService.isLoggedin()) {
+                setLiked(placeDto, place);
+                setNumberOfComment(placeDto, place);
+            }
+            placeDtoList.add(placeDto);
+        });
+        return placeDtoList;
+    }
+
+    public void setLiked(PlaceDto placeDto, Place place) {
+        Member member = memberService.findByUsername(memberService.getAuthUsername());
+        boolean isLiked = likePlaceRepository.existsByMemberAndPlace(member, place);
+        placeDto.setLiked(isLiked);
+    }
+
+    public void setNumberOfComment(PlaceDto placeDto, Place place){
+        Long numberOfComment = commentRepository.countByPlace(place);
+        placeDto.setNumberOfComment(numberOfComment);
+    }
+    public Place findById(Long id) {
         return placeRepository.findById(id)
-                .orElseThrow(()-> new IllegalArgumentException("존재하지 않는 장소입니다"));
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 장소입니다"));
     }
 
     private void validateLocation(double longitude, double latitude) {

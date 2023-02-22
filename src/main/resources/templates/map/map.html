@@ -112,16 +112,18 @@
             width: 308px;
         }
 
-        .comment-list {
-            display: flex;
-            flex-direction: column;
-        }
-
         #username {
             position: absolute;
             right: 200px;
             top: 20px;
             z-index: 2;
+        }
+
+        .red, .red a {
+            color: #f94342;
+        }
+        .mb-1 {
+            margin-bottom: 0;
         }
 
     </style>
@@ -172,16 +174,20 @@
                     <a href="#" class="list-group-item list-group-item-action py-3 lh-sm" th:id="'place'+${place.id}"
                        onclick="getComment(this.id);">
                         <div class="d-flex w-100 align-items-center justify-content-between">
-                            <strong class="mb-1" th:text="${place.title}"></strong>
-                            <small class="text-muted"></small>
+                            <div class="d-flex align-items-center">
+                                <strong class="mb-1 me-2" th:text="${place.title}  "></strong>
+                                <strong th:if="${place.numberOfComment != 0}" th:text="'('+${place.numberOfComment}+')'"></strong>
+                            </div>
                         </div>
                         <div class="col-10 mb-1 small" th:text="${place.address}"></div>
-                        <div th:id="'liked'+${place.id}" onclick="likePlace(this); event.stopPropagation();">
+                        <div th:id="'liked'+${place.id}" style="display: flex;justify-content: end">
                             <form>
-                                <input type="hidden"  name="placeId" th:value="${place.id}">
+                                <input type="hidden" name="placeId" th:value="${place.id}">
                                 <input type="hidden" name="username" th:value="${#authentication.name}">
                             </form>
-                            <i class="bi bi-suit-heart" ></i>
+                            <i sec:authorize="isAuthenticated()" th:if="${place.isLiked() == false}" class="red bi bi-suit-heart" onclick="likePlace(this); event.stopPropagation();"></i>
+                            <i sec:authorize="isAuthenticated()" th:if="${place.isLiked() == true}" class="red bi bi-suit-heart-fill" onclick="likePlace(this); event.stopPropagation();"></i>
+                            <i sec:authorize="isAnonymous()" class="red bi bi-suit-heart" onclick="alert('로그인 해주세요!'); event.stopPropagation();"></i>
                         </div>
                     </a>
                 </th:block>
@@ -195,6 +201,7 @@
                 <a th:text="${place.title}"
                    th:href="@{'https://map.kakao.com/link/to/'+${place.title} + ',' + ${place.latitude} + ',' + ${place.longitude}}"></a>
                 <div th:id="'place'+${place.id}+'-comment'">
+
                 </div>
                 <nav aria-label="Page navigation example" style="display: flex; justify-content: center;">
                     <ul th:id="'pagination'+${place.id}" style="align-self: center" class="pagination">
@@ -306,7 +313,7 @@
         const authorizedUsername = $('#commentForm' + placeId).find('input[name="username"]').val();
         $.ajax({
             type: "get",
-            url: "/comments/" + placeId + '?page=' + requestPage + '&size=8&sort=createdAt,desc',
+            url: "/comments/" + placeId + '?page=' + requestPage + '&size=6&sort=createdAt,desc',
             async: false,
             success: function onData(data) {
                 let commentListHTML = getCommentListHTML(data, authorizedUsername);
@@ -319,15 +326,36 @@
     }
 
     function likePlace(likeButton) {
-        let place = $(likeButton).children('form');
-        let likeIcon = $(likeButton).children('i');
-        console.log($(likeIcon).attr('class'));
-        if($(likeIcon).attr('class').includes("fill")){
-            $(likeIcon).toggleClass("bi bi-suit-heart");
-        } else {
-            $(likeIcon).toggleClass("bi bi-suit-heart-fill");
+        let placeInfo = $(likeButton).siblings('form');
+
+        const likePlaceRequestDto = {
+            placeId: placeInfo.find('input[name="placeId"]').val(),
+            username: placeInfo.find('input[name="username"]').val(),
         }
-        console.log(place.find('input[name=username]').val());
+
+        $.ajax({
+            type: "post",
+            url: "/likedplace/like",
+            data: JSON.stringify(likePlaceRequestDto),
+            async: false,
+            contentType: "application/json",
+            beforeSend: function (jqXHR, settings) {
+                var header = $("meta[name='_csrf_header']").attr("content");
+                var token = $("meta[name='_csrf']").attr("content");
+                jqXHR.setRequestHeader(header, token);
+            },
+            success: function (data) {
+                console.log(data);
+                if (data.isLiked) {
+                    $(likeButton).attr('class', "red bi bi-suit-heart-fill");
+                } else {
+                    $(likeButton).attr('class', "red bi bi-suit-heart");
+                }
+            },
+            error: function (error) {
+                console.log(error);
+            }
+        })
     }
 
     var placeList = [[${placeDtoList}]];

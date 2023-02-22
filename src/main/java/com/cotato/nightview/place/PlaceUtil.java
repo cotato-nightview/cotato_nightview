@@ -16,12 +16,8 @@ import java.util.stream.Collectors;
 @Component
 @RequiredArgsConstructor
 public class PlaceUtil {
-    private final ModelMapper modelMapper;
     private final CoordUtil coordUtil;
-    public List<PlaceDto> entitiesToDtos(List<Place> placeEntityList) {
-        return placeEntityList.stream().map(place -> modelMapper.map(place, PlaceDto.class))
-                .collect(Collectors.toList());
-    }
+
 
     public PlaceDto removeHtmlTags(PlaceDto dto) {
         dto.setTitle(dto.getTitle().replaceAll("<(/)?([a-zA-Z]*)(\\s[a-zA-Z]*=[^>]*)?(\\s)*(/)?>", ""));
