@@ -4,6 +4,8 @@
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8" name="viewport">
+    <meta name="_csrf" th:content="${_csrf.token}">
+    <meta name="_csrf_header" th:content="${_csrf.headerName}">
     <title>Title</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet"
           integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
@@ -53,6 +55,7 @@
             display: none;
             z-index: 2;
             float: right;
+            height: 100vh;
         }
 
         .place-info {
@@ -80,7 +83,6 @@
             align-self: start;
             text-align: start;
             width: 20%;
-            margin-left: 10%;
         }
 
         #commentSubmitButton {
@@ -88,7 +90,7 @@
             align-self: end;
         }
 
-        #commentForm {
+        .commentForm {
             width: 80%;
             display: flex;
             flex-direction: column;
@@ -101,32 +103,62 @@
             width: 50px;
             display: none;
         }
+
+        #keywordSearchForm {
+            width: 348px;
+        }
+
+        #keywordSearchInput {
+            width: 308px;
+        }
+
+        .comment-list {
+            display: flex;
+            flex-direction: column;
+        }
+
+        #username {
+            position: absolute;
+            right: 200px;
+            top: 20px;
+            z-index: 2;
+        }
+
     </style>
 </head>
 
 <body>
+<header>
+    <a sec:authentication="name" id="username" href="#"></a>
+    <button sec:authorize="isAnonymous()" type="button" id="login" class="btn btn-primary"
+            onclick="location.href='/login'">Login
+    </button>
+    <button sec:authorize="isAnonymous()" type="button" id="home" class="btn btn-primary"
+            onclick="location.href='/'">Home
+    </button>
+    <button sec:authorize="isAuthenticated()" type="button" id="logout" class="btn btn-primary"
+            onclick="location.href='/logout'">Logout
+    </button>
+</header>
 
-<button sec:authorize="isAnonymous()" type="button" id="login" class="btn btn-primary"
-        onclick="location.href='/login'">Login
-</button>
-<button sec:authorize="isAnonymous()" type="button" id="home" class="btn btn-primary"
-        onclick="location.href='/'">Home
-</button>
-<button sec:authorize="isAuthenticated()" type="button" id="logout" class="btn btn-primary"
-        onclick="location.href='/logout'">Logout
-</button>
 <div id="map">
     <div style="display: flex">
         <div class="d-flex flex-column align-items-stretch flex-shrink-0 bg-white" id="sidebar">
             <div class="list-group list-group-flush border-bottom scrollarea">
                 <div href="/"
                      class="d-flex align-items-center flex-shrink-0 p-3 link-dark text-decoration-none border-bottom">
-                    <div class="input-group rounded">
-                        <input type="search" class="form-control rounded" placeholder="Search" aria-label="Search"
-                               aria-describedby="search-addon"/>
-                        <button type="submit" class="input-group-text border-0" id="search-addon">
-                            <i class="bi bi-search"></i>
-                        </button>
+                    <div class="input-group rounded" style="display: flex;flex-direction: column">
+                        <form action="/place/map" method="get" id="keywordSearchForm" style="display: flex">
+                            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                            <input type="search" class="form-control rounded" name="keyword" id="keywordSearchInput"
+                                   placeholder="ex) 상수동, 노원구, 충무로2가"
+                                   aria-label="Search"
+                                   aria-describedby="search-addon"/>
+                            <button type="submit" class="input-group-text border-0" id="search-addon">
+                                <i class="bi bi-search"></i>
+                            </button>
+                        </form>
+                        <span style="z-index: 2; color: red" class="valid-message" th:text="${valid_message}"></span>
                     </div>
                 </div>
                 <select class="form-select" id="distanceSelectBox" aria-label="Default select example">
@@ -137,7 +169,8 @@
                 <span>이내 위치한 장소</span>
                 <!--                db에서 가져온 요소를 반복해서 출력-->
                 <th:block th:each="place : ${placeDtoList}">
-                    <a href="#" class="list-group-item list-group-item-action py-3 lh-sm" th:id="'place'+${place.id}">
+                    <a href="#" class="list-group-item list-group-item-action py-3 lh-sm" th:id="'place'+${place.id}"
+                       onclick="getComment(this.id);">
                         <div class="d-flex w-100 align-items-center justify-content-between">
                             <strong class="mb-1" th:text="${place.title}"></strong>
                             <small class="text-muted"></small>
@@ -151,18 +184,33 @@
 
         <!--목록 클릭시 표시되는 정보들-->
         <div id="place-panel">
-            <div th:id="'place'+${place.id}+'-info'" class="place-info" th:each="place : ${placeDtoList}">
+            <div th:id="'place'+${place.id}+'-info'" class="place-info scrollarea" th:each="place : ${placeDtoList}">
                 <a th:text="${place.title}"
                    th:href="@{'https://map.kakao.com/link/to/'+${place.title} + ',' + ${place.latitude} + ',' + ${place.longitude}}"></a>
+                <div th:id="'place'+${place.id}+'-comment'">
+                </div>
+                <nav aria-label="Page navigation example" style="display: flex; justify-content: center;">
+                    <ul th:id="'pagination'+${place.id}" style="align-self: center" class="pagination">
+                    </ul>
+                </nav>
                 <div class="form-group">
-                    <label for="exampleFormControlTextarea1" id="commentLabel">댓글</label>
-                    <form id="commentForm" action="" method="post">
-                        <textarea class="form-control" id="exampleFormControlTextarea1" rows="3"></textarea>
-                        <button type="submit" id="commentSubmitButton" class="btn btn-secondary btn-sm">작성</button>
+                    <form class="commentForm" th:id="'commentForm'+${place.id}">
+                        <input type="hidden" name="username" th:value="${#authentication.name}">
+                        <input type="hidden" name="placeId" th:value="${place.id}">
+                        <label for="commentContent" id="commentLabel">댓글</label>
+                        <textarea sec:authorize="isAuthenticated()" class="form-control" name="content"
+                                  id="commentContent"
+                                  rows="3"></textarea>
+                        <textarea sec:authorize="isAnonymous()" rows="3" disabled>댓글을 작성하려면 로그인해주세요!</textarea>
+                        <button sec:authorize="isAuthenticated()" type="button" onclick="postComment(this)"
+                                id="commentSubmitButton"
+                                class="btn btn-secondary btn-sm">작성
+                        </button>
+
                     </form>
                 </div>
-            </div>
 
+            </div>
         </div>
         <button id="closeButton" type="button" class="btn btn-secondary"><i class="bi bi-x-lg"></i></button>
 
@@ -174,21 +222,99 @@
 <script th:src="@{/js/kakaoMap.js}"></script>
 <script th:src="@{/js/util.js}"></script>
 <script th:src="@{/js/event.js}"></script>
+<script th:src="@{/js/comment.js}"></script>
 <script th:inline="javascript">
     let message = [[${message}]];
     if (message) {
         alert(message);
     }
-    var defaultPlace = [[${defaultPlace}]];
 
-    let searchParams = new URLSearchParams(window.location.search);
+    setSelectedValue()
+
+    function postComment(submitButton) {
+        let form = $(submitButton).parent();
+        let commentRequestDto = {
+            username: form.find('input[name="username"]').val(),
+            content: form.find('textarea[name="content"]').val(),
+            placeId: form.find('input[name="placeId"]').val()
+        }
+
+        $.ajax({
+            type: "post",
+            url: "/comments",
+            data: JSON.stringify(commentRequestDto),
+            contentType: "application/json",
+            beforeSend: function (jqXHR, settings) {
+                var header = $("meta[name='_csrf_header']").attr("content");
+                var token = $("meta[name='_csrf']").attr("content");
+                jqXHR.setRequestHeader(header, token);
+            },
+            success: function (data) {
+                $(submitButton).siblings('textarea[id="commentContent"]').val("");
+                getComment(commentRequestDto.placeId);
+            },
+            error: function (error) {
+                alert(error.responseJSON.content);
+            }
+        })
+    }
+
+    function deleteComment(deleteButton) {
+        let form = $(deleteButton).siblings('form');
+        let currentPage = form.find('input[name="currentPage"]').val();
+        let placeId = form.find('input[name=placeId]').val();
+        let commentRequestDto = {
+            id: form.find('input[name="id"]').val(),
+            username: form.find('input[name="username"]').val(),
+        }
+        console.log(commentRequestDto);
+        $.ajax({
+            type: "post",
+            url: "/comments/delete",
+            data: JSON.stringify(commentRequestDto),
+            contentType: "application/json",
+            beforeSend: function (jqXHR, settings) {
+                var header = $("meta[name='_csrf_header']").attr("content");
+                var token = $("meta[name='_csrf']").attr("content");
+                jqXHR.setRequestHeader(header, token);
+            },
+            success: function (data) {
+                getComment(placeId, currentPage);
+            },
+            error: function (error) {
+                alert(error.responseJSON.content);
+            }
+        })
+    }
+
+
+    function getComment(placeTitleId, requestPage = 0) {
+        let placeId
+        if (typeof placeTitleId === 'string' || placeTitleId instanceof String) {
+            const regex = /[^0-9]/g;
+            placeId = placeTitleId.replace(regex, "");
+        } else {
+            placeId = placeTitleId;
+        }
+        const authorizedUsername = $('#commentForm' + placeId).find('input[name="username"]').val();
+        $.ajax({
+            type: "get",
+            url: "/comments/" + placeId + '?page=' + requestPage + '&size=8&sort=createdAt,desc',
+            async: false,
+            success: function onData(data) {
+                let commentListHTML = getCommentListHTML(data, authorizedUsername);
+                console.log(data);
+                $('#place' + placeId + "-comment").html(commentListHTML);
+                let pagiantionHTML = getPaginationHTML(data, placeId);
+                $('#pagination' + placeId).html(pagiantionHTML);
+            }
+        })
+    }
 
     var placeList = [[${placeDtoList}]];
-    if (defaultPlace) {
-        var map = showMap(defaultPlace.latitude, defaultPlace.longitude);
-    } else {
-        var map = showMap(searchParams.get('latitude'), searchParams.get('longitude'));
-    }
+    let searchParams = new URLSearchParams(window.location.search);
+
+    var map = showMap(searchParams.get('latitude'), searchParams.get('longitude'));
 
     var placePanel = document.getElementById("place-panel")
     var placeInfos = document.getElementsByClassName('place-info');
@@ -207,16 +333,6 @@
     addHideInfoEvent();
 
     addDistanceChangeEvent();
-
-    var select = document.getElementById("distanceSelectBox");
-    var urlParams = new URLSearchParams(window.location.search);
-    var distance = urlParams.get("distance-within");
-    for (var i = 0; i < select.options.length; i++) {
-        if (select.options[i].value == distance) {
-            select.selectedIndex = i;
-            break;
-        }
-    }
 </script>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"

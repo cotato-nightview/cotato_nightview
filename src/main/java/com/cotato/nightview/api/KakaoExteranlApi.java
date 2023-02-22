@@ -1,6 +1,5 @@
 package com.cotato.nightview.api;
 
-import com.cotato.nightview.api.ExteranlApi;
 import com.cotato.nightview.json.JsonUtil;
 import lombok.RequiredArgsConstructor;
 import org.json.simple.JSONArray;
@@ -20,9 +19,9 @@ import java.net.URI;
 @PropertySource("classpath:config.properties")
 public class KakaoExteranlApi implements ExteranlApi {
     private final JsonUtil jsonUtil;
-    @Value("${Kakao-Rest-Api-Key}")
-    private String kakaoRestApiKey;
 
+    @Value("${api.Kakao-Rest-Api-Key}")
+    private String Kakao_Rest_Api_Key;
     public JSONObject transCoord(double mapx, double mapy) {
         // 좌표로 URI 생성
         URI uri = buildTransCoordUri(mapx, mapy);
@@ -66,7 +65,7 @@ public class KakaoExteranlApi implements ExteranlApi {
     @Override
     public RequestEntity<Void> buildRequestEntity(URI uri) {
         return RequestEntity.get(uri)
-                .header("Authorization", "KakaoAK " + kakaoRestApiKey)
+                .header("Authorization", "KakaoAK " + Kakao_Rest_Api_Key)
                 .build();
     }
 

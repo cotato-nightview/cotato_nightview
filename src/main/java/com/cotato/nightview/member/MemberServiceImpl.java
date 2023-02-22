@@ -42,14 +42,22 @@ public class MemberServiceImpl implements MemberService {
 //                .orElse(null);
 //    }
 
+    public Member findByEmail(String email){
+        return memberRepository.findByEmail(email)
+                .orElseThrow(()-> new IllegalArgumentException("존재하지 않는 이메일입니다."));
+    }
+
+    public Member findByUsername(String username){
+        return memberRepository.findByUsername(username)
+                .orElseThrow(()-> new IllegalArgumentException("존재하지 않는 사용자 이름입니다."));
+    }
+
     @Transactional
     public void saveMember(MemberDto memberDto) {
         validateDuplicateMember(memberDto);
         memberDto.setPassword(passwordEncoder.encode(memberDto.getPassword()));
         memberRepository.save(memberDto.toEntity());
     }
-
-
 
     public Map<String, String> validateHandling(Errors errors) {
         Map<String, String> validatorResult = new HashMap<>();
@@ -65,6 +73,9 @@ public class MemberServiceImpl implements MemberService {
     private void validateDuplicateMember(MemberDto memberDto) {
         if (memberRepository.existsByEmail(memberDto.getEmail())) {
             throw new IllegalArgumentException("이미 가입된 이메일입니다.");
+        }
+        if(memberRepository.existsByUsername(memberDto.getUsername())){
+            throw new IllegalArgumentException("이미 가입된 회원 이름입니다.");
         }
     }
 }

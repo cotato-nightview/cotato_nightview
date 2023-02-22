@@ -16,19 +16,6 @@ import javax.servlet.http.HttpSession;
 import java.io.IOException;
 
 public class CustomAuthenticationSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
-//
-//    @Override
-//    public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
-//        SavedRequest savedRequest = (SavedRequest) request.getSession().getAttribute("SPRING_SECURITY_SAVED_REQUEST");
-//        setDefaultTargetUrl("/");
-//        if (savedRequest != null) {
-//            String targetUrl = savedRequest.getRedirectUrl();
-//            redirectStrategy.sendRedirect(request, response, targetUrl);
-//        } else {
-//            System.out.println("dfsadfs");
-//            redirectStrategy.sendRedirect(request, response, getDefaultTargetUrl());
-//        }
-//    }
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
         HttpSession session = request.getSession();

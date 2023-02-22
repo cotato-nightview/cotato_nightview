@@ -65,8 +65,8 @@
 </head>
 <body>
 <div class="background">
-    <header>
-        <div sec:authentication="name" id="username"></div>
+    <header style="display: flex;justify-content: flex-end">
+        <a sec:authentication="name" id="username" href="#"></a>
         <!--    sec 을 활용하여 로그인을 한 유저에게는 로그아웃 버튼만 보여주고 안한 유저에게는 로그인, 회원가입 버튼을 보여줌-->
         <!--    onclick="location.href='/member/memberLoginForm'" 이런식으로 넣으면 해당 url로 이동-->
         <button sec:authorize="isAnonymous()" type="button" id="login" class="btn btn-primary"
@@ -91,7 +91,7 @@
             <div class="d-flex">
                 <form style="display: flex" action="/place/map" method="get">
                     <input class="form-control me-1" name="keyword" id="keyword" type="search"
-                           placeholder="직접 입력하기 ex) 상수동, 노원구"
+                           placeholder="직접 입력하기 ex) 상수동, 노원구, 충무로2가"
                            aria-label="Search">
                     <button class="btn btn-primary" type="submit">
                         <i class="bi bi-search"></i>

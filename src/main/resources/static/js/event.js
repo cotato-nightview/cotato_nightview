@@ -40,6 +40,7 @@ function hideLastClicked() {
 
 function showClickedPlace(placeInfo) {
     lastClicked = placeInfo;
+    getComment(placeInfo.id);
     placePanel.style.display = "block";
     placeInfo.style.display = "block";
 }
@@ -52,4 +53,15 @@ function addDistanceChangeEvent() {
         url.searchParams.set("distance-within", selectedValue);
         window.location.href = url.toString();
     });
+}
+function setSelectedValue(){
+    var select = document.getElementById("distanceSelectBox");
+    var urlParams = new URLSearchParams(window.location.search);
+    var distance = urlParams.get("distance-within");
+    for (var i = 0; i < select.options.length; i++) {
+        if (select.options[i].value == distance) {
+            select.selectedIndex = i;
+            break;
+        }
+    }
 }
