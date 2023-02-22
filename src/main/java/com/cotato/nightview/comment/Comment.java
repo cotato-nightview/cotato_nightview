@@ -17,7 +17,7 @@ import java.time.LocalTime;
 @AllArgsConstructor
 @Builder
 @Entity
-@EntityListeners(AuditingEntityListener.class)
+@EntityListeners(AuditingEntityListener.class)  //작성시간 자동으로 채워줌
 public class Comment {
 
     @Id
@@ -39,7 +39,7 @@ public class Comment {
     @JoinColumn(name = "member_id")
     private Member member;
 
-    //장소 1곳에 댓글 여러개
+    //장소 1곳에 좋아요 여러개
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "place_id")
     private Place place;
