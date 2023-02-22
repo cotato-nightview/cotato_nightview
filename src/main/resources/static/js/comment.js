@@ -25,6 +25,7 @@ function getCommentListHTML(data, authorizedUsername) {
             '                   <input type="hidden" name="username" value="' + commentList[i].username + '">\n' +
             '                   <input type="hidden" name="id" value="' + commentList[i].id + '">\n' +
             '                   <input type="hidden" name="placeId" value="' + commentList[i].placeId + '">\n' +
+            '                   <input type="hidden" name="content" value="' + commentList[i].content + '">\n' +
             '               </form>\n' +
             '               <div class="d-flex w-100 align-items-center justify-content-between">\n' +
             '                   <strong class="mb-1">' + commentList[i].username + '</strong>\n' +
@@ -32,7 +33,8 @@ function getCommentListHTML(data, authorizedUsername) {
             '               </div>\n' +
             '               <div style="text-align: start;padding-left: 30px" class="col-10 mb-1 small">' + commentList[i].content + '</div>';
         if (authorizedUsername == commentList[i].username) {
-            comment += '<div style="align-self: end" onclick="deleteComment(this)"><a href="#">삭제</a></div>';
+            comment += '<div style="align-self: end" onclick="deleteComment(this)"><a href="#">삭제</a></div>\n' +
+                '<div style="align-self: end" onclick="updateComment(this)"><a href="#">수정</a></div>';
         }
         comment += '</div>';
         commentListHTML += comment;

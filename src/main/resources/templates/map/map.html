@@ -176,6 +176,13 @@
                             <small class="text-muted"></small>
                         </div>
                         <div class="col-10 mb-1 small" th:text="${place.address}"></div>
+                        <div th:id="'liked'+${place.id}" onclick="likePlace(this); event.stopPropagation();">
+                            <form>
+                                <input type="hidden"  name="placeId" th:value="${place.id}">
+                                <input type="hidden" name="username" th:value="${#authentication.name}">
+                            </form>
+                            <i class="bi bi-suit-heart" ></i>
+                        </div>
                     </a>
                 </th:block>
 
@@ -309,6 +316,18 @@
                 $('#pagination' + placeId).html(pagiantionHTML);
             }
         })
+    }
+
+    function likePlace(likeButton) {
+        let place = $(likeButton).children('form');
+        let likeIcon = $(likeButton).children('i');
+        console.log($(likeIcon).attr('class'));
+        if($(likeIcon).attr('class').includes("fill")){
+            $(likeIcon).toggleClass("bi bi-suit-heart");
+        } else {
+            $(likeIcon).toggleClass("bi bi-suit-heart-fill");
+        }
+        console.log(place.find('input[name=username]').val());
     }
 
     var placeList = [[${placeDtoList}]];
