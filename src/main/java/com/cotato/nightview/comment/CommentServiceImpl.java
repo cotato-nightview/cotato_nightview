@@ -42,6 +42,15 @@ public class CommentServiceImpl implements CommentService{
         commentRepository.delete(comment);
     }
 
+    @Transactional
+    @Override
+    public void updateComment(CommentRequestDto commentRequestDto, String content){
+        Comment comment = commentRepository.findById(commentRequestDto.getId()).get(); //.get 추가
+        comment.setContent(content);
+
+
+    }
+
     @Override
     public Page<CommentResponseDto> findAllByPlaceId(Long placeId, Pageable pageable){
         Page<Comment> commentEntityList = commentRepository.findAllByPlaceId(placeId,pageable);

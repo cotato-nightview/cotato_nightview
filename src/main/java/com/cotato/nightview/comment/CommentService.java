@@ -8,5 +8,7 @@ import java.util.List;
 public interface CommentService {
     void saveComment(CommentRequestDto commentRequestDto);
     void deleteComment(CommentRequestDto commentRequestDto);
+
+    void updateComment(CommentRequestDto commentRequestDto, String content);
     Page<CommentResponseDto> findAllByPlaceId(Long id, Pageable pageable);
 }

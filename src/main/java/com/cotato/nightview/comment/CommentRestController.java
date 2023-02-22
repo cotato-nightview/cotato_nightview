@@ -26,23 +26,29 @@ public class CommentRestController {
     }
 
     @PostMapping("")
-    public ResponseEntity createComment(@Valid @RequestBody CommentRequestDto commentRequestDto, Errors errors) {
-        if (errors.hasErrors()) {
+    public ResponseEntity<?> createComment(@Valid @RequestBody CommentRequestDto commentRequestDto, Errors errors) {
+        if (errors.hasErrors()) {   //아무것도 안쳤을 때 처리
             Map<String, String> errorMap = new HashMap<>();
             for (FieldError error : errors.getFieldErrors()) {
                 errorMap.put(error.getField(), error.getDefaultMessage());
             }
             return new ResponseEntity(errorMap, HttpStatus.BAD_REQUEST);
         }
-        System.out.println(commentRequestDto.toString());
+       // System.out.println(commentRequestDto.toString()); 테스트코드
         commentService.saveComment(commentRequestDto);
         return new ResponseEntity(HttpStatus.OK);
     }
 
     @PostMapping("/delete")
-    public ResponseEntity deleteComment(@RequestBody CommentRequestDto commentRequestDto) {
-        System.out.println(commentRequestDto.toString());
+    public ResponseEntity<?> deleteComment(@RequestBody CommentRequestDto commentRequestDto) {
+        //System.out.println(commentRequestDto.toString()); 테스트코드
         commentService.deleteComment(commentRequestDto);
+        return new ResponseEntity(HttpStatus.OK);
+    }
+
+    @PostMapping("/update")
+    public ResponseEntity<?> updateComment(@RequestBody CommentRequestDto commentRequestDto, String content){
+        commentService.updateComment(commentRequestDto, content);
         return new ResponseEntity(HttpStatus.OK);
     }
 }
