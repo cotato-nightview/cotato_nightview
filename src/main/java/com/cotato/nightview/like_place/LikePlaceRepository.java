@@ -11,4 +11,5 @@ public interface LikePlaceRepository extends JpaRepository<LikePlace, Long> {
     Optional<LikePlace> findById(Long id);
     Optional<LikePlace> findByMemberAndPlace(Member member, Place place);   //맴버와 장소를 인자로 받아 좋아요 한 적있는지 체크하는 용도로 사용
     boolean existsByMemberAndPlace(Member member, Place place);
+    Long countByPlace(Place place);
 }

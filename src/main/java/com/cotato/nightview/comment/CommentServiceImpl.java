@@ -44,11 +44,9 @@ public class CommentServiceImpl implements CommentService{
 
     @Transactional
     @Override
-    public void updateComment(CommentRequestDto commentRequestDto, String content){
+    public void updateComment(CommentRequestDto commentRequestDto){
         Comment comment = commentRepository.findById(commentRequestDto.getId()).get(); //.get 추가
-        comment.setContent(content);
-
-
+        comment.setContent(commentRequestDto.getContent());
     }
 
     @Override

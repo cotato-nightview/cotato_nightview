@@ -34,7 +34,7 @@ function getCommentListHTML(data, authorizedUsername) {
             '               <div style="text-align: start;padding-left: 30px" class="col-10 mb-1 small">' + commentList[i].content + '</div>';
         if (authorizedUsername == commentList[i].username) {
             comment += '<div style="padding-bottom: 5px; text-align: end" onclick="deleteComment(this)"><a href="#">삭제</a></div>\n' +
-                '<div style="text-align: end" onclick="updateComment(this)"><a href="#">수정</a></div>';
+                '<div style="text-align: end" onclick="loadCommentContent(this)"><a href="#">수정</a></div>';
         }
         comment += '</div>';
         commentListHTML += comment;

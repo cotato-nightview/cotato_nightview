@@ -47,8 +47,9 @@ public class CommentRestController {
     }
 
     @PostMapping("/update")
-    public ResponseEntity<?> updateComment(@RequestBody CommentRequestDto commentRequestDto, String content){
-        commentService.updateComment(commentRequestDto, content);
+    public ResponseEntity<?> updateComment(@RequestBody CommentRequestDto commentRequestDto){
+        System.out.println(commentRequestDto);
+        commentService.updateComment(commentRequestDto);
         return new ResponseEntity(HttpStatus.OK);
     }
 

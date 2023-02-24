@@ -131,11 +131,17 @@ public class PlaceService {
             PlaceDto placeDto = modelMapper.map(place, PlaceDto.class);
             if (memberService.isLoggedin()) {
                 setLiked(placeDto, place);
-                setNumberOfComment(placeDto, place);
             }
+            setNumberOfLike(placeDto, place);
+            setNumberOfComment(placeDto, place);
             placeDtoList.add(placeDto);
         });
         return placeDtoList;
+    }
+
+    public void setNumberOfLike(PlaceDto placeDto, Place place) {
+        Long numberOfLike = likePlaceRepository.countByPlace(place);
+        placeDto.setNumberOfLike(numberOfLike);
     }
 
     public void setLiked(PlaceDto placeDto, Place place) {
@@ -144,10 +150,11 @@ public class PlaceService {
         placeDto.setLiked(isLiked);
     }
 
-    public void setNumberOfComment(PlaceDto placeDto, Place place){
+    public void setNumberOfComment(PlaceDto placeDto, Place place) {
         Long numberOfComment = commentRepository.countByPlace(place);
         placeDto.setNumberOfComment(numberOfComment);
     }
+
     public Place findById(Long id) {
         return placeRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 장소입니다"));
