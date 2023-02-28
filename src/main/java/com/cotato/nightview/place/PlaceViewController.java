@@ -42,7 +42,6 @@ public class PlaceViewController {
     public String showMapByCoord(@RequestParam("longitude") double longitude, @RequestParam("latitude") double latitude,
                                  @RequestParam("distance-within") double distanceWithin, Model model) {
         // 일정 거리 안에 있는 장소를 가져옴
-//        List<Place> placeEntityList = placeService.findAllWtihInDistance(longitude, latitude, distanceWithin);
         // javascript 변수로 사용하기 위해 연관 관계가 없는 dto 객체로 변경
         List<PlaceDto> placeDtoList = placeService.findAllWtihInDistance(longitude,latitude,distanceWithin);
 

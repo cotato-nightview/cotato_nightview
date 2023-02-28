@@ -22,17 +22,4 @@ public class LikePlaceController {
         System.out.println(likePlaceRequestDto);
         return ResponseEntity.ok().body(likePlaceService.addLike(likePlaceRequestDto));
     }
-
-
-//    @PostMapping
-//    public ResponseEntity<?> insertLike(@RequestBody LikePlaceRequestDto likePlaceRequestDto){
-//        likePlaceService.insertLike(likePlaceRequestDto);
-//        return new ResponseEntity<>(HttpStatus.OK);
-//    }
-//
-//    @PostMapping
-//    public ResponseEntity<?> deleteLike(@RequestBody LikePlaceRequestDto likePlaceRequestDto){
-//        likePlaceService.deleteLike(likePlaceRequestDto);
-//        return new ResponseEntity<>(HttpStatus.OK);
-//    }
 }

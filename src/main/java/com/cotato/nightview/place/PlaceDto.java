@@ -45,17 +45,4 @@ public class PlaceDto {
                 .build();
     }
 
-    @Override
-    public String toString() {
-        return "PlaceDto{" +
-                "id=" + id +
-                ", title='" + title + '\'' +
-                ", category='" + category + '\'' +
-                ", address='" + address + '\'' +
-                ", roadAddress='" + roadAddress + '\'' +
-                ", longitude=" + longitude +
-                ", latitude=" + latitude +
-                ", isLiked=" + isLiked +
-                '}';
-    }
 }

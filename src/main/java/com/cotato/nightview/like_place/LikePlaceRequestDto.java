@@ -23,12 +23,4 @@ public class LikePlaceRequestDto {
                 .build();
         return likePlace;
     }
-
-    @Override
-    public String toString() {
-        return "LikePlaceRequestDto{" +
-                ", username='" + username + '\'' +
-                ", placeId=" + placeId +
-                '}';
-    }
 }

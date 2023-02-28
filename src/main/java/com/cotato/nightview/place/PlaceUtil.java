@@ -17,13 +17,10 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class PlaceUtil {
     private final CoordUtil coordUtil;
-
-
     public PlaceDto removeHtmlTags(PlaceDto dto) {
         dto.setTitle(dto.getTitle().replaceAll("<(/)?([a-zA-Z]*)(\\s[a-zA-Z]*=[^>]*)?(\\s)*(/)?>", ""));
         return dto;
     }
-
 
     public PlaceDto[] itemsToDto(JSONArray items) {
         ObjectMapper objectMapper = new ObjectMapper();
