@@ -3,6 +3,10 @@ package com.cotato.nightview.place;
 import com.cotato.nightview.api.NaverExteranlApi;
 import com.cotato.nightview.comment.CommentRepository;
 import com.cotato.nightview.dong.Dong;
+import com.cotato.nightview.enums.ExceptionMessageEnum;
+import com.cotato.nightview.enums.PlaceEnum;
+import com.cotato.nightview.enums.ValidLatitudeEnum;
+import com.cotato.nightview.enums.ValidLongitudeEnum;
 import com.cotato.nightview.gu.Gu;
 import com.cotato.nightview.like_place.LikePlaceRepository;
 import com.cotato.nightview.member.Member;
@@ -63,7 +67,7 @@ public class PlaceService {
             System.out.println(dongName + "    " + ++i + "/" + dongList.size());
 
             // API에서 장소정보 불러와 JSONArray에 저장
-            JSONArray placesFromApi = naverApi.getPlaces(dongName + " 야경");
+            JSONArray placesFromApi = naverApi.getPlaces(dongName + " " + PlaceEnum.NIGHT_SCAPE.getKeyword());
 
             // JSONArray를 dto 배열로 변환
             PlaceDto placeDtos[] = placeUtil.itemsToDto(placesFromApi);
@@ -94,10 +98,11 @@ public class PlaceService {
 
     private boolean isValidPlace(PlaceDto dto) {
         // 카테고리가 적절한지 검사
-        if (!(dto.getCategory().contains("명소") || dto.getCategory().contains("지명"))) return false;
+        if (!(dto.getCategory().contains(PlaceEnum.TOURIST_ATTRACTION.getKeyword()) || dto.getCategory().contains(PlaceEnum.PLACE_NAME.getKeyword())))
+            return false;
 
         // 서울 내에 있는지 검사
-        if (!(dto.getAddress().contains("서울"))) return false;
+        if (!(dto.getAddress().contains(PlaceEnum.SEOUL.getKeyword()))) return false;
 
         // 중복 검사
         if (placeRepository.existsByTitle(dto.getTitle())) return false;
@@ -153,11 +158,11 @@ public class PlaceService {
     }
 
     private void validateLocation(double longitude, double latitude) {
-        if (latitude < 38.61 && latitude > 33.11)
-            if (longitude < 131.87 && longitude > 124.6) {
+        if (latitude < ValidLatitudeEnum.UPPER_LIMIT.getLatitude() && latitude > ValidLatitudeEnum.LOWER_LIMIT.getLatitude())
+            if (longitude < ValidLongitudeEnum.UPPER_LIMIT.getLongitude() && longitude > ValidLongitudeEnum.LOWER_LIMIT.getLongitude()) {
                 return;
             }
-        throw new IllegalArgumentException("지원하지 않는 위치입니다.");
+        throw new IllegalArgumentException(ExceptionMessageEnum.NOT_SUPPORTED_LOCATION.getMessage());
     }
 
 }

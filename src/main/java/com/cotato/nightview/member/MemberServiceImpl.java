@@ -1,6 +1,7 @@
 package com.cotato.nightview.member;
 
 
+import com.cotato.nightview.enums.ExceptionMessageEnum;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -37,10 +38,10 @@ public class MemberServiceImpl implements MemberService {
 
     private void validateDuplicateMember(MemberDto memberDto) {
         if (memberRepository.existsByEmail(memberDto.getEmail())) {
-            throw new IllegalArgumentException("이미 가입된 이메일입니다.");
+            throw new IllegalArgumentException(ExceptionMessageEnum.ALREADY_SIGNED_UP_EMAIL.getMessage());
         }
         if (memberRepository.existsByUsername(memberDto.getUsername())) {
-            throw new IllegalArgumentException("이미 가입된 회원 이름입니다.");
+            throw new IllegalArgumentException(ExceptionMessageEnum.ALREADY_SIGNED_UP_USER_NAME.getMessage());
         }
     }
 

@@ -2,6 +2,7 @@ package com.cotato.nightview.validation;
 
 import com.cotato.nightview.dong.Dong;
 import com.cotato.nightview.dong.DongRepository;
+import com.cotato.nightview.enums.ExceptionMessageEnum;
 import com.cotato.nightview.gu.Gu;
 import com.cotato.nightview.gu.GuRepository;
 import com.cotato.nightview.member.Member;
@@ -28,7 +29,7 @@ public class ValidateService {
 
     public Gu findGuByName(String guName) {
         return guRepository.findByName(guName)
-                .orElseThrow(() -> new EntityNotFoundException("존재하지 않는 지역 이름입니다!"));
+                .orElseThrow(() -> new EntityNotFoundException(ExceptionMessageEnum.NON_EXISTENT_AREA_NAME.getMessage()));
     }
 
     public Dong findDongByAddress(String address) {
@@ -38,7 +39,7 @@ public class ValidateService {
 
     public Dong findDongByName(String dongName) {
         return dongRepository.findByName(dongName)
-                .orElseThrow(() -> new EntityNotFoundException("존재하지 않는 지역 이름입니다!"));
+                .orElseThrow(() -> new EntityNotFoundException(ExceptionMessageEnum.NON_EXISTENT_AREA_NAME.getMessage()));
     }
 
     public List<Dong> findAllDong() {
@@ -47,12 +48,12 @@ public class ValidateService {
 
     public Place findPlaceById(Long id) {
         return placeRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 장소입니다"));
+                .orElseThrow(() -> new IllegalArgumentException(ExceptionMessageEnum.NON_EXISTENT_PLACE_NAME.getMessage()));
     }
 
     public Member findMemberByUsername(String username) {
         return memberRepository.findByUsername(username)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 사용자 이름입니다."));
+                .orElseThrow(() -> new IllegalArgumentException(ExceptionMessageEnum.NON_EXISTENT_USER_NAME.getMessage()));
     }
 
     public Optional<String> getAuthUsername() {
