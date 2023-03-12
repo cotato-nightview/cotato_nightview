@@ -52,6 +52,4 @@ public class CommentRestController {
         commentService.updateComment(commentRequestDto);
         return new ResponseEntity(HttpStatus.OK);
     }
-
-
 }

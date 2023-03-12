@@ -51,17 +51,6 @@ public class KakaoExteranlApi implements ExteranlApi {
                 .toUri();
     }
 
-    public URI buildCoordToAddressUri(double longitude, double latitude) {
-        return UriComponentsBuilder.fromUriString("http://dapi.kakao.com")
-                .path("/v2/local/geo/coord2address.json")
-                .queryParam("x", longitude)
-                .queryParam("y", latitude)
-                .queryParam("input_coord", "WGS84")
-                .encode()
-                .build()
-                .toUri();
-    }
-
     @Override
     public RequestEntity<Void> buildRequestEntity(URI uri) {
         return RequestEntity.get(uri)

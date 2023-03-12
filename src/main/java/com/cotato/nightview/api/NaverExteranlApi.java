@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import java.net.Socket;
 import java.net.URI;
 
 @Service
@@ -40,12 +41,40 @@ public class NaverExteranlApi implements ExteranlApi {
         return items;
     }
 
+    public void getImgSources(String param) {
+        // 지역 이름으로 uri 생성
+        URI uri = buildGetImgSourcesUri(param);
+
+        // URI로 요청 엔티티 생성
+        RequestEntity<Void> requestEntity = buildRequestEntity(uri);
+
+        // API 호출 후 응답을 String 형식 Json으로 받음
+        ResponseEntity<String> res = callApi(requestEntity);
+
+//        // API 응답 중 실제 장소 정보인 "items"만 파싱
+//        JSONArray items = jsonUtil.parseJsonArray(res.getBody(), "items");
+//
+//        return items;
+        System.out.println(res);
+    }
+
     public URI buildGetPlacesUri(String param) {
         return UriComponentsBuilder.fromUriString("https://openapi.naver.com")
                 .path("/v1/search/local.json")
                 .queryParam("query", param)
                 .queryParam("display", "5")
                 .queryParam("sort", "random")
+                .encode()
+                .build()
+                .toUri();
+    }
+
+    public URI buildGetImgSourcesUri(String param) {
+        return UriComponentsBuilder.fromUriString("https://openapi.naver.com")
+                .path("/v1/search/image")
+                .queryParam("query", param)
+                .queryParam("display", "5")
+                .queryParam("sort", "sim")
                 .encode()
                 .build()
                 .toUri();
