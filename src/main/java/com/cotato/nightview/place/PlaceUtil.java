@@ -1,7 +1,11 @@
 package com.cotato.nightview.place;
 
+import com.cotato.nightview.comment.CommentRepository;
 import com.cotato.nightview.coord.Coord;
 import com.cotato.nightview.coord.CoordUtil;
+import com.cotato.nightview.like_place.LikePlaceRepository;
+import com.cotato.nightview.member.Member;
+import com.cotato.nightview.validation.ValidateService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -11,23 +15,22 @@ import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Component
 @RequiredArgsConstructor
 public class PlaceUtil {
-    private final ModelMapper modelMapper;
     private final CoordUtil coordUtil;
-    public List<PlaceDto> entitiesToDtos(List<Place> placeEntityList) {
-        return placeEntityList.stream().map(place -> modelMapper.map(place, PlaceDto.class))
-                .collect(Collectors.toList());
-    }
+    private final LikePlaceRepository likePlaceRepository;
+    private final CommentRepository commentRepository;
+    private final ValidateService validateService;
+
 
     public PlaceDto removeHtmlTags(PlaceDto dto) {
         dto.setTitle(dto.getTitle().replaceAll("<(/)?([a-zA-Z]*)(\\s[a-zA-Z]*=[^>]*)?(\\s)*(/)?>", ""));
         return dto;
     }
-
 
     public PlaceDto[] itemsToDto(JSONArray items) {
         ObjectMapper objectMapper = new ObjectMapper();
@@ -54,6 +57,27 @@ public class PlaceUtil {
         dto.setLongitude(coord.getX());
         dto.setLatitude(coord.getY());
     }
+
+    public void setNumberOfLike(PlaceDto placeDto, Place place) {
+        Long numberOfLike = likePlaceRepository.countByPlace(place);
+        placeDto.setNumberOfLike(numberOfLike);
+    }
+
+    public void setLiked(PlaceDto placeDto, Place place) {
+        Optional<String> authNameWrapper = validateService.getAuthUsername();
+        if (authNameWrapper.isPresent()) {
+            Member member = validateService.findMemberByUsername(authNameWrapper.get());
+            boolean isLiked = likePlaceRepository.existsByMemberAndPlace(member, place);
+            placeDto.setLiked(isLiked);
+        }
+    }
+
+    public void setNumberOfComment(PlaceDto placeDto, Place place) {
+        Long numberOfComment = commentRepository.countByPlace(place);
+        placeDto.setNumberOfComment(numberOfComment);
+    }
+
+
 
 
 }

@@ -12,7 +12,6 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 public class LikePlaceResponseDto {
-
     private Long id;
 
     private Long memberId;

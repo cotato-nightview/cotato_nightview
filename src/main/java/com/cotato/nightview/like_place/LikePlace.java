@@ -3,10 +3,8 @@ package com.cotato.nightview.like_place;
 import com.cotato.nightview.member.Member;
 import com.cotato.nightview.place.Place;
 import lombok.*;
-import org.springframework.data.annotation.CreatedDate;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
 
 @Table(name = "like_place")
 @Getter

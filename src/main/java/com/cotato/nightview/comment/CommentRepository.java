@@ -15,4 +15,5 @@ import java.util.List;
 public interface CommentRepository extends JpaRepository<Comment, Long> {
     Comment findById(String content);
     Page<Comment> findAllByPlaceId(Long placeId, Pageable pageable);
+    Long countByPlace(Place place);
 }

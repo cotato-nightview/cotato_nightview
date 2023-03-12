@@ -9,6 +9,6 @@ public interface CommentService {
     void saveComment(CommentRequestDto commentRequestDto);
     void deleteComment(CommentRequestDto commentRequestDto);
 
-    void updateComment(CommentRequestDto commentRequestDto, String content);
+    void updateComment(CommentRequestDto commentRequestDto);
     Page<CommentResponseDto> findAllByPlaceId(Long id, Pageable pageable);
 }

@@ -1,56 +1,23 @@
 package com.cotato.nightview.member;
 
 
+import com.cotato.nightview.enums.ExceptionMessageEnum;
 import lombok.RequiredArgsConstructor;
-
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.Errors;
 import org.springframework.validation.FieldError;
 
-
 import javax.transaction.Transactional;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 @RequiredArgsConstructor
 @Transactional
 @Service
 public class MemberServiceImpl implements MemberService {
-
-    //ctrl + alt +l로 자동정렬
-    //@autowired 쓰는 대신 @RequiredArgsConstructor + final 쓰는것이 더 용이
     private final MemberRepository memberRepository;
     private final PasswordEncoder passwordEncoder;
-
-    //스프링 시큐리티 쓰게되면 아래코드 필요없음
-//    @Transactional
-//    public Member login(LoginDto loginDto) {
-//        System.out.println("loginDto.getEmail() = " + loginDto.getEmail());
-//        System.out.println("loginDto.getPassword() = " + loginDto.getPassword());
-//        return memberRepository.findByEmail(loginDto.getEmail())
-//                .filter(m -> m.getPassword().equals(loginDto.getPassword()))
-//                .orElse(null);
-//    }
-
-    public Member findByEmail(String email){
-        return memberRepository.findByEmail(email)
-                .orElseThrow(()-> new IllegalArgumentException("존재하지 않는 이메일입니다."));
-    }
-
-    public Member findByUsername(String username){
-        return memberRepository.findByUsername(username)
-                .orElseThrow(()-> new IllegalArgumentException("존재하지 않는 사용자 이름입니다."));
-    }
 
     @Transactional
     public void saveMember(MemberDto memberDto) {
@@ -66,16 +33,16 @@ public class MemberServiceImpl implements MemberService {
             String validKeyName = String.format("valid_%s", error.getField());
             validatorResult.put(validKeyName, error.getDefaultMessage());
         }
-
         return validatorResult;
     }
 
     private void validateDuplicateMember(MemberDto memberDto) {
         if (memberRepository.existsByEmail(memberDto.getEmail())) {
-            throw new IllegalArgumentException("이미 가입된 이메일입니다.");
+            throw new IllegalArgumentException(ExceptionMessageEnum.ALREADY_SIGNED_UP_EMAIL.getMessage());
         }
-        if(memberRepository.existsByUsername(memberDto.getUsername())){
-            throw new IllegalArgumentException("이미 가입된 회원 이름입니다.");
+        if (memberRepository.existsByUsername(memberDto.getUsername())) {
+            throw new IllegalArgumentException(ExceptionMessageEnum.ALREADY_SIGNED_UP_USER_NAME.getMessage());
         }
     }
+
 }

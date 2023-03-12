@@ -1,63 +1,46 @@
 package com.cotato.nightview.like_place;
 
 
-
 import com.cotato.nightview.member.Member;
 import com.cotato.nightview.member.MemberRepository;
 import com.cotato.nightview.member.MemberServiceImpl;
 import com.cotato.nightview.place.Place;
 import com.cotato.nightview.place.PlaceRepository;
 import com.cotato.nightview.place.PlaceService;
+import com.cotato.nightview.validation.ValidateService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
 
 @Transactional
 @RequiredArgsConstructor
 @Service
 public class LikePlaceServiceImpl implements LikePlaceService {
-
-    private final PlaceRepository placeRepository;
     private final LikePlaceRepository likePlaceRepository;
-    private final MemberRepository memberRepository;
+    private final ValidateService validateService;
 
-    private final MemberServiceImpl memberService;
-    private final PlaceService placeService;
-
-
-
-    @Transactional
     @Override
-    public boolean addLike(LikePlaceRequestDto likePlaceRequestDto){
-        Member member = memberService.findByUsername(likePlaceRequestDto.getUsername());
-        Place place = placeService.findById(likePlaceRequestDto.getId());
+    public Map<String, Boolean> addLike(LikePlaceRequestDto likePlaceRequestDto) {
+        Member member = validateService.findMemberByUsername(likePlaceRequestDto.getUsername());
+        Place place = validateService.findPlaceById(likePlaceRequestDto.getPlaceId());
+        Map<String, Boolean> result = new HashMap<>();
 
-        if(isNotAlreadyLike(member, place)) {
+        Optional<LikePlace> likePlace = likePlaceRepository.findByMemberAndPlace(member, place);
+        if (likePlace.isPresent()) {
+            likePlaceRepository.delete(likePlace.get());
+            result.put("isLiked", false);
+            return result;
+        } else {
             likePlaceRepository.save(likePlaceRequestDto.toEntity(member, place));
-            return true;
+            result.put("isLiked", true);
+            return result;
         }
 
-        return false;
     }
 
-    private boolean isNotAlreadyLike(Member member, Place place) {
-        return likePlaceRepository.findByMemberAndPlace(member,place).isEmpty();
-    }
-
-    //아래 두 코드 합쳐야함
-//    @Transactional
-//    @Override
-//    public void insertLike(LikePlaceRequestDto likePlaceRequestDto){
-//        Member member = memberService.findByUsername(likePlaceRequestDto.getUsername());
-//        Place place = placeService.findById(likePlaceRequestDto.getId());
-//        likePlaceRepository.save(likePlaceRequestDto.toEntity(member, place));
-//    }
-//
-//    @Transactional
-//    @Override
-//    public void deleteLike(LikePlaceRequestDto likePlaceRequestDto){
-//
-//    }
 
 }

@@ -13,9 +13,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 public class LikePlaceRequestDto {
-
-    private Long id;
-
     private String username;
     private Long placeId;
 

@@ -85,7 +85,7 @@
             width: 20%;
         }
 
-        #commentSubmitButton {
+        #commentSubmitButton, #commentUpdateButton {
             width: 20%;
             align-self: end;
         }
@@ -112,16 +112,19 @@
             width: 308px;
         }
 
-        .comment-list {
-            display: flex;
-            flex-direction: column;
-        }
-
         #username {
             position: absolute;
             right: 200px;
             top: 20px;
             z-index: 2;
+        }
+
+        .red, .red a {
+            color: #f94342;
+        }
+
+        .mb-1 {
+            margin-bottom: 0;
         }
 
     </style>
@@ -172,16 +175,26 @@
                     <a href="#" class="list-group-item list-group-item-action py-3 lh-sm" th:id="'place'+${place.id}"
                        onclick="getComment(this.id);">
                         <div class="d-flex w-100 align-items-center justify-content-between">
-                            <strong class="mb-1" th:text="${place.title}"></strong>
-                            <small class="text-muted"></small>
+                            <div class="d-flex align-items-center">
+                                <strong class="mb-1 me-2" th:text="${place.title}  "></strong>
+                                <strong th:if="${place.numberOfComment != 0}"
+                                        th:text="'('+${place.numberOfComment}+')'"></strong>
+                            </div>
                         </div>
                         <div class="col-10 mb-1 small" th:text="${place.address}"></div>
-                        <div th:id="'liked'+${place.id}" onclick="likePlace(this); event.stopPropagation();">
+                        <div th:id="'liked'+${place.id}" style="display: flex;justify-content: end">
                             <form>
-                                <input type="hidden"  name="placeId" th:value="${place.id}">
+                                <input type="hidden" name="placeId" th:value="${place.id}">
                                 <input type="hidden" name="username" th:value="${#authentication.name}">
                             </form>
-                            <i class="bi bi-suit-heart" ></i>
+                            <i sec:authorize="isAuthenticated()" th:if="${place.isLiked() == false}"
+                               class="red bi bi-suit-heart" onclick="likePlace(this); event.stopPropagation();"></i>
+                            <i sec:authorize="isAuthenticated()" th:if="${place.isLiked() == true}"
+                               class="red bi bi-suit-heart-fill"
+                               onclick="likePlace(this); event.stopPropagation();"></i>
+                            <i sec:authorize="isAnonymous()" class="red bi bi-suit-heart"
+                               onclick="alert('로그인 해주세요!'); event.stopPropagation();"></i>
+                            <span name="numberOfLike" id="123456" th:text="${place.numberOfLike}" style="color: red;"></span>
                         </div>
                     </a>
                 </th:block>
@@ -195,6 +208,7 @@
                 <a th:text="${place.title}"
                    th:href="@{'https://map.kakao.com/link/to/'+${place.title} + ',' + ${place.latitude} + ',' + ${place.longitude}}"></a>
                 <div th:id="'place'+${place.id}+'-comment'">
+
                 </div>
                 <nav aria-label="Page navigation example" style="display: flex; justify-content: center;">
                     <ul th:id="'pagination'+${place.id}" style="align-self: center" class="pagination">
@@ -202,16 +216,24 @@
                 </nav>
                 <div class="form-group">
                     <form class="commentForm" th:id="'commentForm'+${place.id}">
+                        <input type="hidden" name="currentPage">
                         <input type="hidden" name="username" th:value="${#authentication.name}">
                         <input type="hidden" name="placeId" th:value="${place.id}">
+                        <input type="hidden" name="id">
                         <label for="commentContent" id="commentLabel">댓글</label>
                         <textarea sec:authorize="isAuthenticated()" class="form-control" name="content"
                                   id="commentContent"
                                   rows="3"></textarea>
                         <textarea sec:authorize="isAnonymous()" rows="3" disabled>댓글을 작성하려면 로그인해주세요!</textarea>
-                        <button sec:authorize="isAuthenticated()" type="button" onclick="postComment(this)"
+                        <button sec:authorize="isAuthenticated()" name="postButton" type="button"
+                                onclick="postComment(this)"
                                 id="commentSubmitButton"
                                 class="btn btn-secondary btn-sm">작성
+                        </button>
+                        <button sec:authorize="isAuthenticated()" style="display:none" name="updateButton" type="button"
+                                onclick="updateComment(this)"
+                                id="commentUpdateButton"
+                                class="btn btn-secondary btn-sm">수정
                         </button>
 
                     </form>
@@ -236,7 +258,59 @@
         alert(message);
     }
 
-    setSelectedValue()
+    setSelectedValue();
+
+    function updateComment(submitButton) {
+
+        let form = $(submitButton).parent();
+
+        let currentPage = form.find('input[name="currentPage"]').val();
+        let placeId = form.find('input[name="placeId"]').val();
+
+        let commentRequestDto = {
+            username: form.find('input[name="username"]').val(),
+            content: form.find('textarea[name="content"]').val(),
+            id: form.find('input[name="id"]').val()
+        }
+        console.log(commentRequestDto);
+        $.ajax({
+            type: "post",
+            url: "/comments/update",
+            data: JSON.stringify(commentRequestDto),
+            contentType: "application/json",
+            beforeSend: function (jqXHR, settings) {
+                var header = $("meta[name='_csrf_header']").attr("content");
+                var token = $("meta[name='_csrf']").attr("content");
+                jqXHR.setRequestHeader(header, token);
+            },
+            success: function (data) {
+                getComment(placeId, currentPage);
+                form.find('button[name=updateButton]').hide();
+                form.find('button[name=postButton]').show();
+                form.find('textarea[name="content"]').val("");
+            },
+            error: function (error) {
+                alert(error.responseJSON.content);
+            }
+        })
+    }
+
+    function loadCommentContent(updateButton) {
+        let form = $(updateButton).siblings('form');
+
+        let id = form.find('input[name=id]').val();
+        let placeId = form.find('input[name=placeId]').val();
+        let content = form.find('input[name="content"]').val();
+        let currentPage = form.find('input[name=currentPage]').val();
+
+        let commentForm = $('#commentForm' + placeId);
+        commentForm.find('input[name=id]').val(id);
+        commentForm.find('input[name=currentPage]').val(currentPage);
+        commentForm.find('textarea[name=content]').val(content);
+        commentForm.find('button[name=updateButton]').show();
+        commentForm.find('button[name=postButton]').hide();
+
+    }
 
     function postComment(submitButton) {
         let form = $(submitButton).parent();
@@ -306,7 +380,7 @@
         const authorizedUsername = $('#commentForm' + placeId).find('input[name="username"]').val();
         $.ajax({
             type: "get",
-            url: "/comments/" + placeId + '?page=' + requestPage + '&size=8&sort=createdAt,desc',
+            url: "/comments/" + placeId + '?page=' + requestPage + '&size=6&sort=createdAt,desc',
             async: false,
             success: function onData(data) {
                 let commentListHTML = getCommentListHTML(data, authorizedUsername);
@@ -319,15 +393,37 @@
     }
 
     function likePlace(likeButton) {
-        let place = $(likeButton).children('form');
-        let likeIcon = $(likeButton).children('i');
-        console.log($(likeIcon).attr('class'));
-        if($(likeIcon).attr('class').includes("fill")){
-            $(likeIcon).toggleClass("bi bi-suit-heart");
-        } else {
-            $(likeIcon).toggleClass("bi bi-suit-heart-fill");
+        let placeInfo = $(likeButton).siblings('form');
+
+        const likePlaceRequestDto = {
+            placeId: placeInfo.find('input[name="placeId"]').val(),
+            username: placeInfo.find('input[name="username"]').val(),
         }
-        console.log(place.find('input[name=username]').val());
+
+        $.ajax({
+            type: "post",
+            url: "/likedplace/like",
+            data: JSON.stringify(likePlaceRequestDto),
+            async: false,
+            contentType: "application/json",
+            beforeSend: function (jqXHR, settings) {
+                var header = $("meta[name='_csrf_header']").attr("content");
+                var token = $("meta[name='_csrf']").attr("content");
+                jqXHR.setRequestHeader(header, token);
+            },
+            success: function (data) {
+                if (data.isLiked) {
+                    $(likeButton).attr('class', "red bi bi-suit-heart-fill");
+                    $(likeButton).siblings('span[name=numberOfLike]').text(parseInt($(likeButton).siblings('span[name=numberOfLike]').text()) + 1);
+                } else {
+                    $(likeButton).attr('class', "red bi bi-suit-heart");
+                    $(likeButton).siblings('span[name=numberOfLike]').text(parseInt($(likeButton).siblings('span[name=numberOfLike]').text()) - 1);
+                }
+            },
+            error: function (error) {
+                console.log(error);
+            }
+        })
     }
 
     var placeList = [[${placeDtoList}]];
