@@ -30,8 +30,6 @@ public class PlaceService {
     private final ValidateService validateService;
     private final PlaceUtil placeUtil;
     private final ModelMapper modelMapper;
-    private final LikePlaceRepository likePlaceRepository;
-    private final CommentRepository commentRepository;
 
     public String insertPlace(String name) {
 
@@ -129,33 +127,16 @@ public class PlaceService {
         placeEntityList.forEach(place -> {
             PlaceDto placeDto = modelMapper.map(place, PlaceDto.class);
 
-            setLiked(placeDto, place);
-            setNumberOfLike(placeDto, place);
-            setNumberOfComment(placeDto, place);
+            placeUtil.setLiked(placeDto, place);
+            placeUtil.setNumberOfLike(placeDto, place);
+            placeUtil.setNumberOfComment(placeDto, place);
 
             placeDtoList.add(placeDto);
         });
         return placeDtoList;
     }
 
-    public void setNumberOfLike(PlaceDto placeDto, Place place) {
-        Long numberOfLike = likePlaceRepository.countByPlace(place);
-        placeDto.setNumberOfLike(numberOfLike);
-    }
 
-    public void setLiked(PlaceDto placeDto, Place place) {
-        Optional<String> authNameWrapper = validateService.getAuthUsername();
-        if (authNameWrapper.isPresent()) {
-            Member member = validateService.findMemberByUsername(authNameWrapper.get());
-            boolean isLiked = likePlaceRepository.existsByMemberAndPlace(member, place);
-            placeDto.setLiked(isLiked);
-        }
-    }
-
-    public void setNumberOfComment(PlaceDto placeDto, Place place) {
-        Long numberOfComment = commentRepository.countByPlace(place);
-        placeDto.setNumberOfComment(numberOfComment);
-    }
 
     private void validateLocation(double longitude, double latitude) {
         if (latitude < ValidLatitudeEnum.UPPER_LIMIT.getLatitude() && latitude > ValidLatitudeEnum.LOWER_LIMIT.getLatitude())
