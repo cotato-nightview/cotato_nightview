@@ -21,6 +21,7 @@ public class PlaceDto {
     private boolean isLiked;
     private Long numberOfComment;
     private Long numberOfLike;
+    private String imageUrl;
 
     @Builder
     public PlaceDto(String title, String address, String roadAddress, double longitude, double latitude,boolean isLiked,Long numberOfComment,Long numberOfLike) {
@@ -45,4 +46,20 @@ public class PlaceDto {
                 .build();
     }
 
+    @Override
+    public String toString() {
+        return "PlaceDto{" +
+                "id=" + id +
+                ", title='" + title + '\'' +
+                ", category='" + category + '\'' +
+                ", address='" + address + '\'' +
+                ", roadAddress='" + roadAddress + '\'' +
+                ", longitude=" + longitude +
+                ", latitude=" + latitude +
+                ", isLiked=" + isLiked +
+                ", numberOfComment=" + numberOfComment +
+                ", numberOfLike=" + numberOfLike +
+                ", imageUrl='" + imageUrl + '\'' +
+                '}';
+    }
 }

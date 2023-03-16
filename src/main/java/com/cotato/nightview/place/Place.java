@@ -24,6 +24,7 @@ public class Place {
     private String roadAddress;
     private double longitude;
     private double latitude;
+    private String imageUrl;
 
     @ManyToOne
     @JoinColumn(name = "dong_id")
@@ -31,13 +32,14 @@ public class Place {
 
 
     @Builder
-    public Place(String title, String address, String roadAddress, double longitude, double latitude, Dong dong) {
+    public Place(String title, String address, String roadAddress, double longitude, double latitude, Dong dong,String imageUrl) {
         this.title = title;
         this.address = address;
         this.roadAddress = roadAddress;
         this.longitude = longitude;
         this.latitude = latitude;
         this.dong = dong;
+        this.imageUrl = imageUrl;
     }
 
 }

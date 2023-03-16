@@ -1,25 +1,21 @@
 package com.cotato.nightview.place;
 
 import com.cotato.nightview.api.NaverExteranlApi;
-import com.cotato.nightview.comment.CommentRepository;
 import com.cotato.nightview.dong.Dong;
 import com.cotato.nightview.enums.ExceptionMessageEnum;
 import com.cotato.nightview.enums.PlaceEnum;
 import com.cotato.nightview.enums.ValidLatitudeEnum;
 import com.cotato.nightview.enums.ValidLongitudeEnum;
 import com.cotato.nightview.gu.Gu;
-import com.cotato.nightview.like_place.LikePlaceRepository;
-import com.cotato.nightview.member.Member;
 import com.cotato.nightview.validation.ValidateService;
 import lombok.RequiredArgsConstructor;
 import org.json.simple.JSONArray;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
+import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @Transactional
@@ -52,7 +48,6 @@ public class PlaceService {
     public void initPlace() {
         List<Dong> dongList = validateService.findAllDong();
         int i = 0;
-
         for (Dong dong : dongList) {
             try {
                 Thread.sleep(60);
@@ -70,6 +65,15 @@ public class PlaceService {
             // JSONArray를 dto 배열로 변환
             PlaceDto placeDtos[] = placeUtil.itemsToDto(placesFromApi);
 
+//            for(PlaceDto placeDto : placeDtos){
+//                try {
+//                    Thread.sleep(100);
+//                } catch (InterruptedException e) {
+//                    throw new RuntimeException(e);
+//                }
+//                String imageUrl = naverApi.getImageUrl(placeDto.getTitle());
+//                placeDto.setImageUrl(imageUrl);
+//            }
             // DB에 저장
             for (PlaceDto placeDto : placeDtos) {
                 savePlace(placeDto);
@@ -95,21 +99,24 @@ public class PlaceService {
     }
 
     private boolean isValidPlace(PlaceDto dto) {
+//        // 카테고리가 적절한지 검사
+//        if (!(dto.getCategory().contains(PlaceEnum.TOURIST_ATTRACTION.getKeyword()) || dto.getCategory().contains(PlaceEnum.PLACE_NAME.getKeyword()))) return false;
+//        // 서울 내에 있는지 검사
+//        if (!(dto.getAddress().contains(PlaceEnum.SEOUL.getKeyword()))) return false;
+//        // 중복 검사
+//        if (placeRepository.existsByTitle(dto.getTitle())) return false;
         // 카테고리가 적절한지 검사
-        if (!(dto.getCategory().contains(PlaceEnum.TOURIST_ATTRACTION.getKeyword()) || dto.getCategory().contains(PlaceEnum.PLACE_NAME.getKeyword())))
-            return false;
-
-        // 서울 내에 있는지 검사
-        if (!(dto.getAddress().contains(PlaceEnum.SEOUL.getKeyword()))) return false;
-
+//        if (!(dto.getCategory().contains("명소") || dto.getCategory().contains("지명"))) return false;
+//        // 서울 내에 있는지 검사
+//        if (!(dto.getAddress().contains("서울"))) return false;
         // 중복 검사
         if (placeRepository.existsByTitle(dto.getTitle())) return false;
-
         return true;
     }
 
     public void savePlace(PlaceDto dto) {
         if (isValidPlace(dto)) {
+            System.out.println("성공");
             placeUtil.transCoord(dto);
             Dong dong = validateService.findDongByAddress(dto.getAddress());
             placeRepository.save(dto.toEntity(dong));
@@ -135,8 +142,6 @@ public class PlaceService {
         });
         return placeDtoList;
     }
-
-
 
     private void validateLocation(double longitude, double latitude) {
         if (latitude < ValidLatitudeEnum.UPPER_LIMIT.getLatitude() && latitude > ValidLatitudeEnum.LOWER_LIMIT.getLatitude())

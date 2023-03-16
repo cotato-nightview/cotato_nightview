@@ -34,7 +34,6 @@ public class CommentRestController {
             }
             return new ResponseEntity(errorMap, HttpStatus.BAD_REQUEST);
         }
-       // System.out.println(commentRequestDto.toString()); 테스트코드
         commentService.saveComment(commentRequestDto);
         return new ResponseEntity(HttpStatus.OK);
     }

@@ -3,15 +3,16 @@ package com.cotato.nightview.api;
 import com.cotato.nightview.json.JsonUtil;
 import lombok.RequiredArgsConstructor;
 import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
+import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import java.net.Socket;
 import java.net.URI;
 
 @Service
@@ -28,34 +29,28 @@ public class NaverExteranlApi implements ExteranlApi {
     public JSONArray getPlaces(String param) {
         // 지역 이름으로 uri 생성
         URI uri = buildGetPlacesUri(param);
-
+        System.out.println(param);
         // URI로 요청 엔티티 생성
         RequestEntity<Void> requestEntity = buildRequestEntity(uri);
 
         // API 호출 후 응답을 String 형식 Json으로 받음
         ResponseEntity<String> res = callApi(requestEntity);
-
         // API 응답 중 실제 장소 정보인 "items"만 파싱
         JSONArray items = jsonUtil.parseJsonArray(res.getBody(), "items");
 
         return items;
     }
 
-    public void getImgSources(String param) {
+    public String getImageUrl(String param) {
         // 지역 이름으로 uri 생성
         URI uri = buildGetImgSourcesUri(param);
-
         // URI로 요청 엔티티 생성
         RequestEntity<Void> requestEntity = buildRequestEntity(uri);
-
         // API 호출 후 응답을 String 형식 Json으로 받음
         ResponseEntity<String> res = callApi(requestEntity);
-
-//        // API 응답 중 실제 장소 정보인 "items"만 파싱
-//        JSONArray items = jsonUtil.parseJsonArray(res.getBody(), "items");
-//
-//        return items;
-        System.out.println(res);
+        JSONArray items = jsonUtil.parseJsonArray(res.getBody(), "items");
+        JSONObject imageObject = (JSONObject) items.get(0);
+        return imageObject.get("link").toString();
     }
 
     public URI buildGetPlacesUri(String param) {

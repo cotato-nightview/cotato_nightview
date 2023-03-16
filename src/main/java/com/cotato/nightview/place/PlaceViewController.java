@@ -1,13 +1,7 @@
 package com.cotato.nightview.place;
 
-import com.cotato.nightview.api.KakaoExteranlApi;
 import com.cotato.nightview.api.NaverExteranlApi;
-import com.cotato.nightview.dong.Dong;
-import com.cotato.nightview.dong.DongService;
-import com.cotato.nightview.gu.Gu;
-import com.cotato.nightview.gu.GuService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.annotation.Validated;
@@ -52,7 +46,8 @@ public class PlaceViewController {
 
     @GetMapping("/img")
     public String aaaaaaa() {
-        naverExteranlApi.getImgSources("녹번동");
+        String res = naverExteranlApi.getImageUrl("망원 한강 공원 야경");
+        System.out.println(res);
         return "home/index";
     }
 
