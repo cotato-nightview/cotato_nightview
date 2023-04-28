@@ -50,6 +50,7 @@ public class NaverExteranlApi implements ExteranlApi {
         ResponseEntity<String> res = callApi(requestEntity);
         JSONArray items = jsonUtil.parseJsonArray(res.getBody(), "items");
         JSONObject imageObject = (JSONObject) items.get(0);
+        System.out.println(imageObject.get("link").toString());
         return imageObject.get("link").toString();
     }
 

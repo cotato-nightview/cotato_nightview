@@ -43,6 +43,7 @@ public class PlaceDto {
                 .longitude(longitude)
                 .latitude(latitude)
                 .dong(dong)
+                .imageUrl(imageUrl)
                 .build();
     }
 

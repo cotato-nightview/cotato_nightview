@@ -24,6 +24,7 @@ public class Place {
     private String roadAddress;
     private double longitude;
     private double latitude;
+    @Column(name = "image_url")
     private String imageUrl;
 
     @ManyToOne

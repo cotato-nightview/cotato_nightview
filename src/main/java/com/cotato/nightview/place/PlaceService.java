@@ -18,7 +18,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
-@Transactional
 @RequiredArgsConstructor
 public class PlaceService {
     private final PlaceRepository placeRepository;
@@ -65,15 +64,18 @@ public class PlaceService {
             // JSONArray를 dto 배열로 변환
             PlaceDto placeDtos[] = placeUtil.itemsToDto(placesFromApi);
 
-//            for(PlaceDto placeDto : placeDtos){
-//                try {
-//                    Thread.sleep(100);
-//                } catch (InterruptedException e) {
-//                    throw new RuntimeException(e);
-//                }
-//                String imageUrl = naverApi.getImageUrl(placeDto.getTitle());
-//                placeDto.setImageUrl(imageUrl);
-//            }
+            for(PlaceDto placeDto : placeDtos){
+                try {
+                    Thread.sleep(100);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+                if (isValidPlace(placeDto)) {
+                    String imageUrl = naverApi.getImageUrl(placeDto.getTitle());
+                    placeDto.setImageUrl(imageUrl);
+                    System.out.println("placeDto = " + placeDto);
+                }
+            }
             // DB에 저장
             for (PlaceDto placeDto : placeDtos) {
                 savePlace(placeDto);
@@ -99,16 +101,10 @@ public class PlaceService {
     }
 
     private boolean isValidPlace(PlaceDto dto) {
-//        // 카테고리가 적절한지 검사
-//        if (!(dto.getCategory().contains(PlaceEnum.TOURIST_ATTRACTION.getKeyword()) || dto.getCategory().contains(PlaceEnum.PLACE_NAME.getKeyword()))) return false;
-//        // 서울 내에 있는지 검사
-//        if (!(dto.getAddress().contains(PlaceEnum.SEOUL.getKeyword()))) return false;
-//        // 중복 검사
-//        if (placeRepository.existsByTitle(dto.getTitle())) return false;
         // 카테고리가 적절한지 검사
-//        if (!(dto.getCategory().contains("명소") || dto.getCategory().contains("지명"))) return false;
-//        // 서울 내에 있는지 검사
-//        if (!(dto.getAddress().contains("서울"))) return false;
+        if (!(dto.getCategory().contains(PlaceEnum.TOURIST_ATTRACTION.getKeyword()) || dto.getCategory().contains(PlaceEnum.PLACE_NAME.getKeyword()))) return false;
+        // 서울 내에 있는지 검사
+        if (!(dto.getAddress().contains(PlaceEnum.SEOUL.getKeyword()))) return false;
         // 중복 검사
         if (placeRepository.existsByTitle(dto.getTitle())) return false;
         return true;
@@ -116,7 +112,6 @@ public class PlaceService {
 
     public void savePlace(PlaceDto dto) {
         if (isValidPlace(dto)) {
-            System.out.println("성공");
             placeUtil.transCoord(dto);
             Dong dong = validateService.findDongByAddress(dto.getAddress());
             placeRepository.save(dto.toEntity(dong));
